@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Landing Page</title>
+    <link rel="icon" href="{{ url_for('static', filename='glep.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!--favicon is traditionally .ico (probably for icon), 
+    but can be .png .jpg among other formats.
+     aim for 32x32 dimension-->
+</head>
+<body>
+    <div class="text">
+        <p>This is the admin page of the <strong>reading subscription service</strong>! Follow any one of the links below to do your DBA work.</p>
+        
+        <p>Please choose from the following options:</p>
+
+        <!-- Vertical list of links to different pages -->
+        <ul class="link-list">
+            <li><a href="{{ url_for('create') }}">Create Subscription</a></li>
+            <li><a href="{{ url_for('update') }}">Update Subscription</a></li>
+            <li><a href="{{ url_for('read') }}">Read Subscription</a></li>
+            <li><a href="{{ url_for('delete') }}">Delete Subscription</a></li>
+        </ul>
+
+        <!-- Back link (if you want to go back to the homepage or another page) -->
+        <a href="{{ url_for('homepage') }}">Back to Homepage</a>
+        <div class="gif-container">
+            <img src="{{ url_for('static', filename='dba.gif') }}" alt="hardworker" class="hiddeninplainsight">
+        </div>
+    </div>
+</body>
+</html>

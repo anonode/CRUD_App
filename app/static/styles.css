@@ -1,0 +1,51 @@
+.text {
+    align-items: center;
+    justify-content: flex-start;
+    display: flex;
+    flex-direction: column; /*invert the axes*/
+    height: 50vh;
+    gap: 20px; /*add space between elements of div*/
+    font-size: 2em;
+}
+
+/* Styling for the link list */
+.link-list {
+    list-style-type: none;        /* Removes bullet points */
+    padding-left: 0;              /* Removes left padding */
+    margin: 0;                    /* Removes default margin */
+}
+
+.link-list li {
+    margin-bottom: 10px;          /* Adds space between list items */
+}
+
+.link-list a {
+    text-decoration: none;        /* Removes underline from links */
+    color: #007bff;               /* Sets the link color */
+    font-size: 50px;              /* Increases font size */
+}
+
+.link-list a:hover {
+    color: #41f71d;               
+}
+
+/* Styling for the GIF container */
+.gif-container {
+    width: 100%;                  
+    height: auto;                 
+    display: flex;                
+    justify-content: center;      /* CENTERED A DIV RAHHHHH*/
+    align-items: center;          
+}
+
+/* Initially hide the GIF */
+.hiddeninplainsight {
+    visibility: hidden;           
+    width: 200px;                 
+    height: auto;                 
+    transition: visibility 0s; 
+}
+
+.gif-container:hover .hiddeninplainsight {
+    visibility: visible;
+}

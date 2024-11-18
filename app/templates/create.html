@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Customer</title>
+</head>
+<body>
+    <h1>Create a New Customer</h1>
+
+    <!-- show flash messages. hopefully record creation worked 😶 -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+
+    <form action="{{ url_for('create_record') }}" method="POST">
+        <label for="FName">First Name:</label>
+        <input type="text" id="FName" name="FName" required><br><br>
+
+        <label for="LName">Last Name:</label>
+        <input type="text" id="LName" name="LName" required><br><br>
+
+        <label for="Address">Address:</label>
+        <textarea id="Address" name="Address" required></textarea><br><br>
+
+        <button type="submit">Create Customer</button>
+    </form>
+</body>
+</html>
