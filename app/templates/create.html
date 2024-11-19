@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='juice.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
+    
     <title>Create Customer</title>
 </head>
 <body>
@@ -20,17 +23,60 @@
     {% endwith %}
 
 
-    <form action="{{ url_for('create_record') }}" method="POST">
-        <label for="FName">First Name:</label>
-        <input type="text" id="FName" name="FName" required><br><br>
 
-        <label for="LName">Last Name:</label>
-        <input type="text" id="LName" name="LName" required><br><br>
+    <div class="forms">
+        <!-- Customer form data -->
+        <button class="expandButton" id="form1">Customer</button>
+        <div class="content">
+            <form action="{{ url_for('create_customer') }}" method="POST">
+                <label for="LName">Last Name</label>
+                <input type="text" id="LName" name="LName" required><br>
+                <label for="FName">First Name</label>
+                <input type="text" id="FName" name="FName" required><br>
+                <label for="Address">Address</label>
+                <input type="text" id="Address" name="Address" required><br>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
 
-        <label for="Address">Address:</label>
-        <textarea id="Address" name="Address" required></textarea><br><br>
+        <!-- will recieve form data for both newspaper and magazine -->
+        <button class="expandButton" id="form2">Subscription</button>
+        <div class="content">
+            <form action="{{ url_for('create_subscription') }}" method="POST">
+                <label for="SubType">Subscription Type</label>
+                <input type="text" id="SubType" name="SubType" required><br>
+                <label for="Customer_id">Customer ID</label>
+                <input type="number" id="Customer_id" name="Customer_id" required><br>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
 
-        <button type="submit">Create Customer</button>
-    </form>
+        <!-- Publication form data-->
+        <button class="expandButton" id="form3">Publication</button>
+        <div class="content">
+            <form action="{{ url_for('create_publication') }}" method="POST">
+                <label for="PubName">Publication Name</label>
+                <input type="text" id="PubName" name="PubName" required><br>
+                <label for="PubType">Publication Type</label>
+                <input type="text" id="PubType" name="PubType" required><br>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+    <!-- Add more forms here for other tables (magazine, newspaper, etc.) -->
+
+
+
+    <div class="text">
+        <p>Links:</p>
+        <ul class="link-list">
+            <li><a href="{{ url_for('create') }}"><strong>C</strong>reate Subscription</a></li>
+            <li><a href="{{ url_for('read') }}"><strong>R</strong>ead Subscription</a></li>
+            <li><a href="{{ url_for('update') }}"><strong>U</strong>pdate Subscription</a></li>
+            <li><a href="{{ url_for('delete') }}"><strong>D</strong>elete Subscription</a></li>
+            <li><a href="{{ url_for('homepage') }}">Homepage</a></li>
+        </ul>
+    </div>
+
 </body>
 </html>

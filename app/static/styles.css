@@ -20,7 +20,7 @@
 }
 
 .link-list a {
-    text-decoration: none;        /* Removes underline from links */
+    text-decoration:underline;        
     color: #007bff;               /* Sets the link color */
     font-size: 50px;              /* Increases font size */
 }
@@ -29,7 +29,6 @@
     color: #41f71d;               
 }
 
-/* Styling for the GIF container */
 .gif-container {
     width: 100%;                  
     height: auto;                 
@@ -38,7 +37,6 @@
     align-items: center;          
 }
 
-/* Initially hide the GIF */
 .hiddeninplainsight {
     visibility: hidden;           
     width: 200px;                 
@@ -48,4 +46,55 @@
 
 .gif-container:hover .hiddeninplainsight {
     visibility: visible;
+}
+
+.expandButton {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    margin: 10px 0;
+    width: 20%;
+}
+
+.forms {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.expandButton:hover {
+    background-color: #45a049;
+}
+
+.form-container {
+    display: none;
+    margin-top: 20px;
+}
+
+.form-section {
+    margin-bottom: 15px;
+}
+
+.form-section label {
+    display: block;
+    font-weight: bold;
+}
+
+.form-section input,
+.form-section textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+textarea {
+    height: 100px;
 }

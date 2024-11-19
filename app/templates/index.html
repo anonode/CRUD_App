@@ -16,16 +16,14 @@
         
         <p>Please choose from the following options:</p>
 
-        <!-- Vertical list of links to different pages -->
         <ul class="link-list">
-            <li><a href="{{ url_for('create') }}">Create Subscription</a></li>
-            <li><a href="{{ url_for('update') }}">Update Subscription</a></li>
-            <li><a href="{{ url_for('read') }}">Read Subscription</a></li>
-            <li><a href="{{ url_for('delete') }}">Delete Subscription</a></li>
+            <li><a href="{{ url_for('create') }}"><strong>C</strong>reate Subscription</a></li>
+            <li><a href="{{ url_for('read') }}"><strong>R</strong>ead Subscription</a></li>
+            <li><a href="{{ url_for('update') }}"><strong>U</strong>pdate Subscription</a></li>
+            <li><a href="{{ url_for('delete') }}"><strong>D</strong>elete Subscription</a></li>
+            <li><a href="{{ url_for('homepage') }}">Homepage</a></li>
         </ul>
 
-        <!-- Back link (if you want to go back to the homepage or another page) -->
-        <a href="{{ url_for('homepage') }}">Back to Homepage</a>
         <div class="gif-container">
             <img src="{{ url_for('static', filename='dba.gif') }}" alt="hardworker" class="hiddeninplainsight">
         </div>

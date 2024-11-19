@@ -4,9 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{{ url_for('static', filename='glep.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>Delete</title>
 </head>
 <body>
-    
+    <div class="text">
+        <p>Here you may delete a customer's record or subscription</p>
+        <ul class="link-list">
+            <li><a href="{{ url_for('create') }}"><strong>C</strong>reate Subscription</a></li>
+            <li><a href="{{ url_for('read') }}"><strong>R</strong>ead Subscription</a></li>
+            <li><a href="{{ url_for('update') }}"><strong>U</strong>pdate Subscription</a></li>
+            <li><a href="{{ url_for('delete') }}"><strong>D</strong>elete Subscription</a></li>
+            <li><a href="{{ url_for('homepage') }}">Homepage</a></li>
+        </ul>
+    </div>
 </body>
 </html>
