@@ -151,7 +151,7 @@ def read_subscription():
     customer_id = request.form['Customer_id']
 
     if subtype not in pubtypes:
-        flash(f'The subtype you entered does not exist. Must be one of the following: {" ".join(pubtypes)}', 'error')
+        flash(f'The subtype you entered does not exist. Must be one of the following: {" ".join([ptype for ptype in pubtypes])}', 'error')
         return redirect(url_for('read'))
     try:
         customer_id = int(customer_id)
@@ -159,7 +159,7 @@ def read_subscription():
         flash(f'You did not enter a valid customer ID. Here is what you entered: {customer_id}', 'error')
         return redirect(url_for('read'))
     
-    
+
     return redirect(url_for('read'))
 
 @app.route('/read_publication', methods=['GET'])
