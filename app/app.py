@@ -125,14 +125,42 @@ def create_publication():
 
 ### handlers for read
 
-@app.route('/read_customer', methods=['GET'])
+@app.route('/read_customer', methods=['GET']) # later: consider outputing the subscriptions that the customer has as well
 def read_customer():
-    
-    return redirect(url_for('read'))
+    customer_id = request.form['Customer_id']
+    f_initial = request.form['FName']
+    lname = request.form['LName']
+    try:
+        customer_id = int(customer_id)
+    except ValueError:
+        flash(f'You did not enter an integer for Customer_ID. Here is what you entered: {customer_id}', 'error')
+
+    cur = mysql.connector.cursor()
+    if f_initial == "":
+        if lname == "":
+            cur.execute("SELECT * FROM Customer WHERE ")  # fix this later
+        else:
+            cur.execute("SELECT * FROM ") # finish this
+
+    cur.close()
+    return redirect(url_for('read')) ## might not want to redirect, could cause the query to be removed from the page
 
 @app.route('/read_subscription', methods=['GET'])
 def read_subscription():
-    pass
+    subtype = request.form['SubType']
+    customer_id = request.form['Customer_id']
+
+    if subtype not in pubtypes:
+        flash(f'The subtype you entered does not exist. Must be one of the following: {" ".join(pubtypes)}', 'error')
+        return redirect(url_for('read'))
+    try:
+        customer_id = int(customer_id)
+    except ValueError:
+        flash(f'You did not enter a valid customer ID. Here is what you entered: {customer_id}', 'error')
+        return redirect(url_for('read'))
+    
+    
+    return redirect(url_for('read'))
 
 @app.route('/read_publication', methods=['GET'])
 def read_publication():
@@ -184,6 +212,7 @@ def delete_customer():
                 cur.execute("DELETE FROM Customer WHERE IdNo = %i AND FName = %s AND LName = %s", (customer_id, f_initial, lname))
                 mysql.connection.commit()
                 flash('Deletion successful', 'success')
+    cur.close()
     return redirect(url_for('delete'))
         
 
