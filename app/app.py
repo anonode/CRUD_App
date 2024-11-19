@@ -18,6 +18,8 @@ schema_dict = {
     "publications": ["PubName", "PubType"]
 }
 
+pubtypes = ['Magazine', 'Newspaper']
+
 
 mysql = MySQL(app)
 
@@ -45,7 +47,7 @@ def delete():
     return render_template('delete.html')
 
 
-#### POST METHODS - APPLICATION LOGIC HERE ##### 
+#### APPLICATION LOGIC HERE ##### 
 
 
 #### Handlers for create
@@ -89,7 +91,6 @@ def create_customer():
     return redirect(url_for('create'))
 
 
-# Handler for adding a new subscription
 @app.route('/create_subscription', methods=['POST'])
 def create_subscription():
     # Collect form data for the subscription
@@ -106,24 +107,19 @@ def create_subscription():
     return redirect(url_for('create'))
 
 
-# Handler for adding a new magazine
 @app.route('/create_publication', methods=['POST'])
 def create_publication():
     # Collect form data for the magazine
-    MagType = request.form['MagType']
-    NumberOfIssues = request.form['NumberOfIssues']
-    StartDate = request.form['StartDate']
-    EndDate = request.form['EndDate']
-    Price = request.form['Price']
+    pubname = request.form['PubName']
+    pubtype = request.form['PubType']
+
     
-    # Insert into the magazine table
     cursor = mysql.connection.cursor()
-    cursor.execute("INSERT INTO magazine (MagType, NumberOfIssues, StartDate, EndDate, Price) VALUES (%s, %s, %s, %s, %s)",
-                    (MagType, NumberOfIssues, StartDate, EndDate, Price))
+    cursor.execute("INSERT INTO publications (PubName, PubType) VALUES (%s, %s)", (pubname, pubtype))
     mysql.connection.commit()
     cursor.close()
 
-    flash('Magazine added successfully!', 'success')
+    flash('Publication added successfully!', 'success')
     return redirect(url_for('create'))
 
 
@@ -165,11 +161,59 @@ def delete_customer():
 
 @app.route('/delete_subscription', methods=['POST'])
 def delete_subscription():
-    pass
+    subtype = request.form['SubType']
+    customer_id = request.form['Customer_id']
+    if customer_id == "":
+        flash("Need to enter the Customer_id to do anything.", 'error')
+        return redirect(url_for('delete'))
+    else:
+        error = ""
+        if subtype not in pubtypes or subtype == "":
+            error += f"Publication type must be either: {" ".join([ptype for ptype in pubtypes])}"
+            flash(error, 'error')
+            return redirect(url_for('delete'))
+        else:
+            cur = mysql.connection.cursor()
+            cur.execute("DELETE FROM subscriptions WHERE subtype = %s AND customer_id = %i", (subtype, customer_id))
+            mysql.connection.commit()
+    flash("Record deleted successfully", 'success')
+    cur.close()
+                
+    return redirect(url_for('delete'))
+    
 
 @app.route('/delete_publication', methods=['POST'])
 def delete_publication():
-    pass
+    pubname = request.form['PubName']
+    pubtype = request.form['PubType'] # if nothing is passed, the type(pubtype): <class 'str'>. which means empty string comparisons work here
+        ### check if data follows rules. e.g., address has to be like 255 chars
+    error = ""
+    if pubname == "":
+        error += "Publication Name is required for publication deletion. Publication Type is optional."
+        flash(error, 'error')
+        return redirect(url_for('delete'))
+    
+    if pubtype != "" and pubtype not in pubtypes:
+        # branch off
+        error += f"Publication type must be either: {" ".join([ptype for ptype in pubtypes])}"
+        flash(error, 'error')
+        return redirect(url_for('delete'))
+
+    cur = mysql.connection.cursor()
+
+
+    if pubtype != "":
+        cur.execute("DELETE FROM publications WHERE PubName = %s AND PubType = %s", (pubname, pubtype))
+        mysql.connection.commit()
+    else:
+        cur.execute("DELETE FROM publications WHERE PubName = %s", (pubname,))
+    
+    flash("Record deleted successfully", 'success')
+    cur.close()
+                
+    return redirect(url_for('delete'))
+    
+
 
 
 if __name__ == '__main__':

@@ -8,8 +8,62 @@
     <title>Delete</title>
 </head>
 <body>
+    <h1>Delete records from the database</h1>
+
+    <!-- show flash messages. hopefully record creation worked 😶 -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <div class="forms">
+        <p>Enter ID number to view customer record. You can also search customers by name or <address></address>.</p>
+        <!--delete_customer-->
+        <button class="expandButton" id="form1">Customer</button>
+        <div class="content">
+            <form action="{{ url_for('delete_customer') }}" method="POST">
+                <label for="Customer_id">Customer ID</label>
+                <input type="number" id="Customer_id" name="Customer_id"><br>
+                <label for="LName">Last Name</label>
+                <input type="text" id="LName" name="LName"><br>
+                <label for="FName">First Initial</label>
+                <input type="text" id="FName" name="FName"><br>
+                <label for="Address">Address</label>
+                <input type="text" id="Address" name="Address"><br>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <!--delete_subscription-->
+        <button class="expandButton" id="form2">Subscription</button>
+        <div class="content">
+            <form action="{{ url_for('delete_subscription') }}" method="POST">
+                <label for="SubType">Subscription Type</label>
+                <input type="text" id="SubType" name="SubType"><br>
+                <label for="Customer_id">Customer ID</label>
+                <input type="number" id="Customer_id" name="Customer_id"><br>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <!--delete_publication-->
+        <button class="expandButton" id="form3">Publication</button>
+        <div class="content">
+            <form action="{{ url_for('delete_publication') }}" method="POST">
+                <label for="PubName">Publication Name</label>
+                <input type="text" id="PubName" name="PubName"><br>
+                <label for="PubType">Publication Type</label>
+                <input type="text" id="PubType" name="PubType"><br>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
     <div class="text">
-        <p>Here you may delete a customer's record or subscription</p>
         <ul class="link-list">
             <li><a href="{{ url_for('create') }}"><strong>C</strong>reate Subscription</a></li>
             <li><a href="{{ url_for('read') }}"><strong>R</strong>ead Subscription</a></li>
