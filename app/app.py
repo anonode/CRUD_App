@@ -52,7 +52,7 @@ def delete():
 
 #### Handlers for create
 
-@app.route('/create', methods=['POST'])
+@app.route('/create', methods=['POST']) #done
 def create_customer():
     FName = request.form['FName']
     LName = request.form['LName']
@@ -155,11 +155,39 @@ def update_publication():
 
 ### handlers for delete
 
-@app.route('/delete_customer', methods=['POST'])
+@app.route('/delete_customer', methods=['POST']) #done
 def delete_customer():
-    pass
+    customer_id = request.form['Customer_id']
+    f_initial = request.form['FName']
+    lname = request.form['LName']
+    address = request.form['Address']
+    try:
+        customer_id = int(customer_id)
+    except ValueError:
+        flash('You did not enter an integer. Customers are referred to by their ID numbers.', 'error')
+        return redirect(url_for('delete'))
+    
+    if not f_initial.isalpha():
+        flash(f'Please provide a single initial with only alphabetic characters. Here is what you entered: {f_initial}', 'error')
+        return redirect(url_for('delete'))
+    else:
+        if not lname.isalpha():
+            flash(f'Your name must have only letters in it. Here is what you entered: {lname}', 'error')
+            return redirect(url_for('delete'))
+        else:
+            if address != "":
+                cur = mysql.connection.cursor()
+                cur.execute("DELETE FROM Customer WHERE IdNo = %i AND FName = %s AND LName = %s AND Address = %s", (customer_id, f_initial, lname, address))
+                mysql.connection.commit()
+            else:
+                cur = mysql.connection.cursor()
+                cur.execute("DELETE FROM Customer WHERE IdNo = %i AND FName = %s AND LName = %s", (customer_id, f_initial, lname))
+                mysql.connection.commit()
+                flash('Deletion successful', 'success')
+    return redirect(url_for('delete'))
+        
 
-@app.route('/delete_subscription', methods=['POST'])
+@app.route('/delete_subscription', methods=['POST']) #done
 def delete_subscription():
     subtype = request.form['SubType']
     customer_id = request.form['Customer_id']
@@ -182,7 +210,7 @@ def delete_subscription():
     return redirect(url_for('delete'))
     
 
-@app.route('/delete_publication', methods=['POST'])
+@app.route('/delete_publication', methods=['POST']) #done
 def delete_publication():
     pubname = request.form['PubName']
     pubtype = request.form['PubType'] # if nothing is passed, the type(pubtype): <class 'str'>. which means empty string comparisons work here
