@@ -8,11 +8,8 @@
     font-size: 2em;
 }
 
-/* Styling for the link list */
 .link-list {
     list-style-type: none;        /* Removes bullet points */
-    padding-left: 0;              /* Removes left padding */
-    margin: 0;                    /* Removes default margin */
 }
 
 .link-list li {
@@ -21,8 +18,8 @@
 
 .link-list a {
     text-decoration:underline;        
-    color: #007bff;               /* Sets the link color */
-    font-size: 50px;              /* Increases font size */
+    color: #007bff;
+    font-size: 50px;
 }
 
 .link-list a:hover {
@@ -64,7 +61,9 @@
 .forms {
     display: flex;
     justify-content: center;
+    align-items: center;
     flex-direction: column;
+    gap: 22px;
 }
 
 .expandButton:hover {
@@ -98,3 +97,59 @@
 textarea {
     height: 100px;
 }
+
+.table-container {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th {
+    background-color: #000000; /* adjust color of table headers*/
+    color: white;     /* text will appear white*/
+    padding: 12px;      /* formatting */
+    text-align: left;
+    font-size: 1.1em;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    font-size: 1.75em;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+.no-data-message {
+    font-size: 1.2em;
+    color: #555;
+    text-align: center;
+    margin-top: 20px;
+    font-style: italic;
+}
+
+.small-table {
+    width: 50%;
+    margin: auto;
+    font-size: 1em;
+}
+
+.small-table td, .small-table th {
+    padding: 10px;
+}
+

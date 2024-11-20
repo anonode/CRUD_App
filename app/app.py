@@ -127,18 +127,22 @@ def create_publication():
 
 @app.route('/read_customer', methods=['GET']) # later: consider outputing the subscriptions that the customer has as well
 def read_customer():
-    customer_id = request.form['Customer_id']
-    f_initial = request.form['FName']
-    lname = request.form['LName']
+    customer_id = request.args.get('Customer_id') # request.form['key'] syntax is only for retrieving form data from a POST request
+    f_initial = request.args.get('FName')
+    lname = request.args.get('LName')
+    address = request.args.get('Address')
     try:
         customer_id = int(customer_id)
     except ValueError:
         flash(f'You did not enter an integer for Customer_ID. Here is what you entered: {customer_id}', 'error')
 
-    cur = mysql.connector.cursor()
+    cur = mysql.connection.cursor()
     if f_initial == "":
         if lname == "":
-            cur.execute("SELECT * FROM Customer WHERE ")  # fix this later
+            cur.execute("SELECT * FROM customer WHERE IdNo = %s;",(customer_id,))  # fix this later
+            customers = cur.fetchall()
+            cur.close()
+            return render_template('read.html', customers=customers)
         else:
             cur.execute("SELECT * FROM ") # finish this
 
@@ -147,20 +151,36 @@ def read_customer():
 
 @app.route('/read_subscription', methods=['GET'])
 def read_subscription():
-    subtype = request.form['SubType']
-    customer_id = request.form['Customer_id']
+    subtype = request.args.get('SubType')
+    customer_id = request.args.get('Customer_id')
 
     if subtype not in pubtypes:
         flash(f'The subtype you entered does not exist. Must be one of the following: {" ".join([ptype for ptype in pubtypes])}', 'error')
         return redirect(url_for('read'))
-    try:
-        customer_id = int(customer_id)
-    except ValueError:
-        flash(f'You did not enter a valid customer ID. Here is what you entered: {customer_id}', 'error')
-        return redirect(url_for('read'))
-    
+    if customer_id != "":
+        try:
+            customer_id = int(customer_id)
+        except ValueError:
+            flash(f'You did not enter a valid customer ID. Here is what you entered: {customer_id}', 'error')
+            return redirect(url_for('read'))
 
-    return redirect(url_for('read'))
+    if subtype == "" and customer_id == "":
+        flash('You did not enter anything to search for. Please try again. Only one parameter is required for this search.', 'error')
+        return redirect(url_for('read'))
+    else:
+        cur = mysql.connection.cursor()
+        if subtype == "":
+            cur.execute('SELECT * FROM subscriptions WHERE Customer_id = %s', (customer_id,))
+            subscriptions = cur.fetchall()
+        elif customer_id == "":
+            cur.execute('SELECT * FROM subscriptions WHERE SubType = %s', (subtype,))
+            subscriptions = cur.fetchall()
+        else:
+            cur.execute('SELECT * FROM subscriptions WHERE SubType = %s AND Customer_id = %s', (subtype, customer_id))
+            subscriptions = cur.fetchall()
+    cur.close()
+    return render_template('read.html', subscriptions=subscriptions)
+
 
 @app.route('/read_publication', methods=['GET'])
 def read_publication():
@@ -205,11 +225,11 @@ def delete_customer():
         else:
             if address != "":
                 cur = mysql.connection.cursor()
-                cur.execute("DELETE FROM Customer WHERE IdNo = %i AND FName = %s AND LName = %s AND Address = %s", (customer_id, f_initial, lname, address))
+                cur.execute("DELETE FROM Customer WHERE IdNo = %s AND FName = %s AND LName = %s AND Address = %s", (customer_id, f_initial, lname, address))
                 mysql.connection.commit()
             else:
                 cur = mysql.connection.cursor()
-                cur.execute("DELETE FROM Customer WHERE IdNo = %i AND FName = %s AND LName = %s", (customer_id, f_initial, lname))
+                cur.execute("DELETE FROM Customer WHERE IdNo = %s AND FName = %s AND LName = %s", (customer_id, f_initial, lname))
                 mysql.connection.commit()
                 flash('Deletion successful', 'success')
     cur.close()
@@ -231,7 +251,7 @@ def delete_subscription():
             return redirect(url_for('delete'))
         else:
             cur = mysql.connection.cursor()
-            cur.execute("DELETE FROM subscriptions WHERE subtype = %s AND customer_id = %i", (subtype, customer_id))
+            cur.execute("DELETE FROM subscriptions WHERE subtype = %s AND customer_id = %s", (subtype, customer_id))
             mysql.connection.commit()
     flash("Record deleted successfully", 'success')
     cur.close()
