@@ -17,7 +17,6 @@ FOREIGN KEY (Customer_id) REFERENCES customer(IdNo) ON DELETE CASCADE);
 
 CREATE TABLE magazine (
 MagId INT NOT NULL auto_increment,
-MagType VARCHAR(45) NOT NULL,
 NumberOfIssues VARCHAR(255) NOT NULL,
 StartDate DATE NOT NULL,
 EndDate DATE NOT NULL,
@@ -30,7 +29,6 @@ FOREIGN KEY (Customer_id) REFERENCES customer(IdNo) ON DELETE CASCADE);
 
 CREATE TABLE newspaper (
 NewsId INT NOT NULL auto_increment,
-NewsType VARCHAR(45) NOT NULL,
 NumberOfMonths INT NOT NULL,
 StartDate date NOT NULL,
 EndDate DATE NOT NULL,
