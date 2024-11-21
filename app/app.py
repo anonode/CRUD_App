@@ -184,20 +184,40 @@ def read_subscription():
 
 @app.route('/read_publication', methods=['GET'])
 def read_publication():
-    pass
-
+    pubname = request.args.get('PubName')
+    pubtype = request.args.get('PubType')
+    
+    if pubtype not in pubtypes:
+        flash(f'The pubtype you entered is not correct. Must be one of the following: {" ".join(pub for pub in pubtypes)}', 'error')
+        return redirect(url_for('read'))
+    
+    cur = mysql.connection.cursor
+    cur.execute('SELECT * FROM publications WHERE PubType = %s AND PubName = %s', (pubtype, pubname))    
+    pubs = cur.fetchall()
+    cur.close()
+    
+    return render_template('read.html', publications=pubs)
+    
 ### handlers for update
 
 @app.route('/update_customer', methods=['POST'])
 def update_customer():
     pass
-
+    
 @app.route('/update_subscription', methods=['POST'])
 def update_subscription():
     pass
 
 @app.route('/update_publication', methods=['POST'])
 def update_publication():
+    pass
+
+@app.route('/update_magazine', methods=['POST'])
+def update_magazine():
+    pass
+
+@app.route('/update_newspaper', methods=['POST'])
+def update_newspaper():
     pass
 
 
