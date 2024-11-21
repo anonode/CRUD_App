@@ -202,7 +202,40 @@ def read_publication():
 
 @app.route('/update_customer', methods=['POST'])
 def update_customer():
-    pass
+    f_initial = request.form['FName']
+    lname = request.form['LName']
+    address = request.form['Address']
+    customer_id = request.form['Customer_id']
+
+    if not customer_id.isdigit():
+        flash(f'You did not enter a natural number for the customer_id. Here is what you entered: {customer_id}')
+        return redirect(url_for('update'))
+    if lname == "" and address == "" and f_initial == "":
+        flash('You need to enter at least one parameter to update', 'error')
+        return redirect(url_for('update'))
+    
+    set_clauses = []
+    params = []
+
+    if f_initial != "":
+        set_clauses.append("FName = %s")
+        params.append(f_initial)
+
+    if lname != "":
+        set_clauses.append("LName = %s")
+        params.append(lname)
+
+    if address != "":
+        set_clauses.append("Address = %s")
+        params.append(address)
+    
+    setclause = ", ".join(set_clauses)
+    cur = mysql.connection.cursor
+    query = f"UPDATE customer SET {setclause} WHERE IdNo = %s"
+    cur.execute(query, (customer_id, ))
+    mysql.connection.commit()
+    flash('Update done successfully', 'success')
+    return redirect(url_for('create'))
     
 @app.route('/update_subscription', methods=['POST'])
 def update_subscription():
