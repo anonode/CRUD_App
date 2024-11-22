@@ -84,6 +84,73 @@
         <p class="no-data-message">No publications found.</p>
     {% endif %}
 
+    {% if magazines %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Magazine ID</th>
+                        <th>Number of Issues</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Price</th>
+                        <th>Subscription ID</th>
+                        <th>Customer ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for magazine in magazines %}
+                        <tr>
+                            <td>{{ magazine[0] }}</td>
+                            <td>{{ magazine[1] }}</td>
+                            <td>{{ magazine[2] }}</td>
+                            <td>{{ magazine[3] }}</td>
+                            <td>{{ magazine[4] }}</td>
+                            <td>{{ magazine[5] }}</td>
+                            <td>{{ magazine[6] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="no-data-message">No magazines found.</p>
+    {% endif %}
+
+    {% if newspapers %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Newspaper ID</th>
+                        <th>Number of Months</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Price</th>
+                        <th>Subscription ID</th>
+                        <th>Customer ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for newspaper in newspapers %}
+                        <tr>
+                            <td>{{ newspaper[0] }}</td>
+                            <td>{{ newspaper[1] }}</td>
+                            <td>{{ newspaper[2] }}</td>
+                            <td>{{ newspaper[3] }}</td>
+                            <td>{{ newspaper[4] }}</td>
+                            <td>{{ newspaper[5] }}</td>
+                            <td>{{ newspaper[6] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="no-data-message">No newspapers found.</p>
+    {% endif %}
+
+
     <div class="forms">
         <p>Enter ID number to view customer record. You can also search customers by name or address.</p>
 

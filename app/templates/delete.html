@@ -180,7 +180,6 @@
             </form>
         </div>
 
-
         <button class="expandButton" id="form3">Publication</button>
         <div class="content">
             <form action="{{ url_for('delete_publication') }}" method="POST">
@@ -191,6 +190,39 @@
                 <button type="submit">Submit</button>
             </form>
         </div>
+
+        <button class="expandButton" id="form4">Magazine</button>
+        <div class="content">
+            <form action="{{ url_for('delete_magazine') }}" method="POST">
+                <label for="MagId">Magazine ID</label>
+                <input type="number" id="MagId" name="MagId" required><br>
+                
+                <label for="SubId">Subscription ID</label>
+                <input type="number" id="SubId" name="SubId" required><br>
+                
+                <label for="Customer_id">Customer ID</label>
+                <input type="number" id="Customer_id" name="Customer_id" required><br>
+                
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <button class="expandButton" id="form5">Newspaper</button>
+        <div class="content">
+            <form action="{{ url_for('delete_newspaper') }}" method="POST">
+                <label for="NewsId">Newspaper ID</label>
+                <input type="number" id="NewsId" name="NewsId" required><br>
+                
+                <label for="SubId">Subscription ID</label>
+                <input type="number" id="SubId" name="SubId" required><br>
+                
+                <label for="Customer_id">Customer ID</label>
+                <input type="number" id="Customer_id" name="Customer_id" required><br>
+                
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        
     </div>
 
     <div class="text">
