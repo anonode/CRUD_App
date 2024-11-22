@@ -234,21 +234,43 @@ def update_customer():
     query = f"UPDATE customer SET {setclause} WHERE IdNo = %s"
     cur.execute(query, (customer_id, ))
     mysql.connection.commit()
+    cur.close()
     flash('Update done successfully', 'success')
     return redirect(url_for('create'))
     
 @app.route('/update_subscription', methods=['POST'])
 def update_subscription():
-    pass
+    customer_id = request.form['Customer_id']
+    subtype = request.form['subtype']
+    
+    if subtype not in pubtypes:
+        flash('the subtype you entered is not valid. try again.', 'error')
+        return redirect(url_for('update'))
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE subscription SET SubType = %s WHERE Customer_id = %s", (subtype, customer_id))
+    mysql.connection.commit()
+    cur.close()
+    flash('update of subscriptions done successfully.', 'success')
+    return redirect(url_for('update'))
 
 @app.route('/update_publication', methods=['POST'])
 def update_publication():
-    pass
+    pubname = request.form['PubName']
+    pubtype = request.form['PubType']
+    
+    if pubtype not in pubtypes:
+        flash(f'Invalid Pubtype. Try again. You entered: {pubtype}', 'error')
+        return redirect(url_for('update'))
+    cur = mysql.connection.cursor()
+    cur.execute('UPDATE publications SET PubType = %s WHERE PubName = %s', (pubtype, pubname))
+    mysql.connction.commit()
+    cur.close()
+    flash('update of publications done successfully', 'success')
+    return redirect(url_for('update'))
 
 @app.route('/update_magazine', methods=['POST'])
 def update_magazine():
     pass
-
 @app.route('/update_newspaper', methods=['POST'])
 def update_newspaper():
     pass
@@ -342,9 +364,6 @@ def delete_publication():
     cur.close()
                 
     return redirect(url_for('delete'))
-    
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
