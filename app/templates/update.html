@@ -8,17 +8,154 @@
     <title>Update</title>
 </head>
 <body>
-    <div class="text">
-        <p></p>
-        
-        <p>Please choose from the following options:</p>
+    <p>Please choose from the following options:</p>
 
+        {% if customers %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer ID</th>
+                        <th>First Initial</th>
+                        <th>Last Name</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customers %}
+                        <tr>
+                            <td>{{ customer[0] }}</td>
+                            <td>{{ customer[1] }}</td>
+                            <td>{{ customer[2] }}</td>
+                            <td>{{ customer[3] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="no-data-message">No customers found.</p>
+    {% endif %}
+
+    {% if subscriptions %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subscription ID</th>
+                        <th>Subscription Type</th>
+                        <th>Customer ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subscription in subscriptions %}
+                        <tr>
+                            <td>{{ subscription[0] }}</td>
+                            <td>{{ subscription[1] }}</td>
+                            <td>{{ subscription[2] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="no-data-message">No subscriptions found.</p>
+    {% endif %}
+
+    {% if publications %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Publication Name</th>
+                        <th>Publication Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for publication in publications %}
+                        <tr>
+                            <td>{{ publication[0] }}</td>
+                            <td>{{ publication[1] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="no-data-message">No publications found.</p>
+    {% endif %}
+
+    {% if magazines %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Magazine ID</th>
+                        <th>Number of Issues</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Price</th>
+                        <th>Subscription ID</th>
+                        <th>Customer ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for magazine in magazines %}
+                        <tr>
+                            <td>{{ magazine[0] }}</td>
+                            <td>{{ magazine[1] }}</td>
+                            <td>{{ magazine[2] }}</td>
+                            <td>{{ magazine[3] }}</td>
+                            <td>{{ magazine[4] }}</td>
+                            <td>{{ magazine[5] }}</td>
+                            <td>{{ magazine[6] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="no-data-message">No magazines found.</p>
+    {% endif %}
+
+    {% if newspapers %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Newspaper ID</th>
+                        <th>Number of Months</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Price</th>
+                        <th>Subscription ID</th>
+                        <th>Customer ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for newspaper in newspapers %}
+                        <tr>
+                            <td>{{ newspaper[0] }}</td>
+                            <td>{{ newspaper[1] }}</td>
+                            <td>{{ newspaper[2] }}</td>
+                            <td>{{ newspaper[3] }}</td>
+                            <td>{{ newspaper[4] }}</td>
+                            <td>{{ newspaper[5] }}</td>
+                            <td>{{ newspaper[6] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="no-data-message">No newspapers found.</p>
+    {% endif %}
 
         <div class="forms">
             <!-- Customer form data -->
             <button class="expandButton" id="form1">Customer</button>
             <div class="content">
-                <form action="{{ url_for('create_customer') }}" method="POST">
+                <form action="{{ url_for('update_customer') }}" method="POST">
                     <label for="Customer_id">Customer ID</label>
                     <input type="text" id="Customer_id" name="Customer_id" required><br>
                     <label for="LName">Last Name</label>
@@ -34,7 +171,7 @@
             <!-- will recieve form data for both newspaper and magazine -->
             <button class="expandButton" id="form2">Subscription</button>
             <div class="content">
-                <form action="{{ url_for('create_subscription') }}" method="POST">
+                <form action="{{ url_for('update_subscription') }}" method="POST">
                     <label for="SubType">Subscription Type</label>
                     <input type="text" id="SubType" name="SubType" required><br>
                     <label for="Customer_id">Customer ID</label>
@@ -46,7 +183,7 @@
             <!-- Publication form data-->
             <button class="expandButton" id="form3">Publication</button>
             <div class="content">
-                <form action="{{ url_for('create_publication') }}" method="POST">
+                <form action="{{ url_for('update_publication') }}" method="POST">
                     <label for="PubName">Publication Name</label>
                     <input type="text" name="PubName" required><br>
                     <label for="PubType">Publication Type</label>
@@ -57,7 +194,7 @@
             <!-- Magazine form data -->
             <button class="expandButton" id="form4">Magazine Subscription</button>
             <div class="content">
-                <form action="{{ url_for('create_magazine') }}" method="POST">
+                <form action="{{ url_for('update_magazine') }}" method="POST">
                     <label for="NumberOfIssues">Number of Issues</label>
                     <input type="text" id="NumberOfIssues" name="NumberOfIssues" required><br>
 
@@ -83,7 +220,7 @@
             <!-- Newspaper form data -->
             <button class="expandButton" id="form5">Newspaper Subscription</button>
             <div class="content">
-                <form action="{{ url_for('create_newspaper') }}" method="POST">
+                <form action="{{ url_for('update_newspaper') }}" method="POST">
                     <label for="NumberOfMonths">Number of Months</label>
                     <input type="number" id="NumberOfMonths" name="NumberOfMonths" required><br>
 
@@ -106,6 +243,7 @@
                 </form>
             </div>
         </div>
+    <div class="text">
         <p>Links:</p>
         <ul class="link-list">
             <li><a href="{{ url_for('create') }}"><strong>C</strong>reate Subscription</a></li>

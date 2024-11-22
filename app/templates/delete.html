@@ -9,21 +9,151 @@
 </head>
 <body>
     <h1>Delete records from the database</h1>
+        {% if customers %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer ID</th>
+                        <th>First Initial</th>
+                        <th>Last Name</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customers %}
+                        <tr>
+                            <td>{{ customer[0] }}</td>
+                            <td>{{ customer[1] }}</td>
+                            <td>{{ customer[2] }}</td>
+                            <td>{{ customer[3] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="no-data-message">No customers found.</p>
+    {% endif %}
 
-    <!-- show flash messages. hopefully record creation worked 😶 -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul>
-                {% for category, message in messages %}
-                    <li class="{{ category }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+    {% if subscriptions %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subscription ID</th>
+                        <th>Subscription Type</th>
+                        <th>Customer ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subscription in subscriptions %}
+                        <tr>
+                            <td>{{ subscription[0] }}</td>
+                            <td>{{ subscription[1] }}</td>
+                            <td>{{ subscription[2] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="no-data-message">No subscriptions found.</p>
+    {% endif %}
+
+    {% if publications %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Publication Name</th>
+                        <th>Publication Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for publication in publications %}
+                        <tr>
+                            <td>{{ publication[0] }}</td>
+                            <td>{{ publication[1] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="no-data-message">No publications found.</p>
+    {% endif %}
+
+    {% if magazines %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Magazine ID</th>
+                        <th>Number of Issues</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Price</th>
+                        <th>Subscription ID</th>
+                        <th>Customer ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for magazine in magazines %}
+                        <tr>
+                            <td>{{ magazine[0] }}</td>
+                            <td>{{ magazine[1] }}</td>
+                            <td>{{ magazine[2] }}</td>
+                            <td>{{ magazine[3] }}</td>
+                            <td>{{ magazine[4] }}</td>
+                            <td>{{ magazine[5] }}</td>
+                            <td>{{ magazine[6] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="no-data-message">No magazines found.</p>
+    {% endif %}
+
+    {% if newspapers %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Newspaper ID</th>
+                        <th>Number of Months</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Price</th>
+                        <th>Subscription ID</th>
+                        <th>Customer ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for newspaper in newspapers %}
+                        <tr>
+                            <td>{{ newspaper[0] }}</td>
+                            <td>{{ newspaper[1] }}</td>
+                            <td>{{ newspaper[2] }}</td>
+                            <td>{{ newspaper[3] }}</td>
+                            <td>{{ newspaper[4] }}</td>
+                            <td>{{ newspaper[5] }}</td>
+                            <td>{{ newspaper[6] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="no-data-message">No newspapers found.</p>
+    {% endif %}
+                
 
     <div class="forms">
         <p>Enter ID number to view customer record. You can also search customers by name or <address></address>.</p>
-        <!--delete_customer-->
+
         <button class="expandButton" id="form1">Customer</button>
         <div class="content">
             <form action="{{ url_for('delete_customer') }}" method="POST">
@@ -38,7 +168,7 @@
                 <button type="submit">Submit</button>
             </form>
         </div>
-        <!--delete_subscription-->
+
         <button class="expandButton" id="form2">Subscription</button>
         <div class="content">
             <form action="{{ url_for('delete_subscription') }}" method="POST">
@@ -50,7 +180,7 @@
             </form>
         </div>
 
-        <!--delete_publication-->
+
         <button class="expandButton" id="form3">Publication</button>
         <div class="content">
             <form action="{{ url_for('delete_publication') }}" method="POST">
