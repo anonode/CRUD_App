@@ -25,21 +25,21 @@
 
 
     <div class="forms">
-        <!-- Customer form data -->
         <button class="expandButton" id="form1">Customer</button>
         <div class="content">
             <form action="{{ url_for('create_customer') }}" method="POST">
+                <label for="Customer_id">Customer ID</label>
+                <input type="text" id="Customer_id" name="Customer_id" required><br>
                 <label for="LName">Last Name</label>
-                <input type="text" id="LName" name="LName" required><br>
+                <input type="text" id="LName" name="LName" ><br>
                 <label for="FName">First Name</label>
-                <input type="text" id="FName" name="FName" required><br>
+                <input type="text" id="FName" name="FName" ><br>
                 <label for="Address">Address</label>
-                <input type="text" id="Address" name="Address" required><br>
+                <input type="text" id="Address" name="Address" ><br>
                 <button type="submit">Submit</button>
             </form>
         </div>
 
-        <!-- will recieve form data for both newspaper and magazine -->
         <button class="expandButton" id="form2">Subscription</button>
         <div class="content">
             <form action="{{ url_for('create_subscription') }}" method="POST">
@@ -51,7 +51,6 @@
             </form>
         </div>
 
-        <!-- Publication form data-->
         <button class="expandButton" id="form3">Publication</button>
         <div class="content">
             <form action="{{ url_for('create_publication') }}" method="POST">
@@ -62,10 +61,52 @@
                 <button type="submit">Submit</button>
             </form>
         </div>
+
+        <button class="expandButton" id="form4">Magazine Subscription</button>
+        <div class="content">
+            <form action="{{ url_for('create_magazine') }}" method="POST">
+                <label for="NumberOfIssues">Number of Issues</label>
+                <input type="text" id="NumberOfIssues" name="NumberOfIssues" required><br>
+
+                <label for="StartDate">Start Date</label>
+                <input type="date" id="StartDate" name="StartDate" required><br>
+                <!--end date is derived-->
+
+                <label for="Price">Price</label>
+                <input type="number" step="0.01" id="Price" name="Price" required><br>
+
+                <label for="SubId">Subscription ID</label>
+                <input type="number" id="SubId" name="SubId" required><br>
+
+                <label for="Customer_id">Customer ID</label>
+                <input type="number" id="Customer_id" name="Customer_id" required><br>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <button class="expandButton" id="form5">Newspaper Subscription</button>
+        <div class="content">
+            <form action="{{ url_for('create_newspaper') }}" method="POST">
+                <label for="NumberOfMonths">Number of Months</label>
+                <input type="number" id="NumberOfMonths" name="NumberOfMonths" required><br>
+
+                <label for="StartDate">Start Date</label>
+                <input type="date" id="StartDate" name="StartDate" required><br>
+                <!--end date is derived-->
+                <label for="Price">Price</label>
+                <input type="number" step="0.01" id="Price" name="Price" required><br>
+
+                <label for="SubId">Subscription ID</label>
+                <input type="number" id="SubId" name="SubId" required><br>
+
+                <label for="Customer_id">Customer ID</label>
+                <input type="number" id="Customer_id" name="Customer_id" required><br>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
     </div>
-    <!-- Add more forms here for other tables (magazine, newspaper, etc.) -->
-
-
 
     <div class="text">
         <p>Links:</p>

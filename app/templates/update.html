@@ -152,7 +152,6 @@
     {% endif %}
 
         <div class="forms">
-            <!-- Customer form data -->
             <button class="expandButton" id="form1">Customer</button>
             <div class="content">
                 <form action="{{ url_for('update_customer') }}" method="POST">
@@ -168,7 +167,6 @@
                 </form>
             </div>
 
-            <!-- will recieve form data for both newspaper and magazine -->
             <button class="expandButton" id="form2">Subscription</button>
             <div class="content">
                 <form action="{{ url_for('update_subscription') }}" method="POST">
@@ -180,7 +178,6 @@
                 </form>
             </div>
 
-            <!-- Publication form data-->
             <button class="expandButton" id="form3">Publication</button>
             <div class="content">
                 <form action="{{ url_for('update_publication') }}" method="POST">
@@ -191,7 +188,7 @@
                     <button type="submit">Submit</button>
                 </form>
             </div>
-            <!-- Magazine form data -->
+
             <button class="expandButton" id="form4">Magazine Subscription</button>
             <div class="content">
                 <form action="{{ url_for('update_magazine') }}" method="POST">
@@ -217,7 +214,6 @@
                 </form>
             </div>
 
-            <!-- Newspaper form data -->
             <button class="expandButton" id="form5">Newspaper Subscription</button>
             <div class="content">
                 <form action="{{ url_for('update_newspaper') }}" method="POST">

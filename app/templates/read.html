@@ -190,6 +190,57 @@
                 <button type="submit">Submit</button>
             </form>
         </div>
+
+        <button class="expandButton" id="form4">Magazine</button>
+        <div class="content">
+            <form action="{{ url_for('read_magazine') }}" method="GET">
+                <label for="MagId">Magazine ID</label>
+                <input type="number" id="MagId" name="MagId"><br>
+                
+                <label for="SubId">Subscription ID</label>
+                <input type="number" id="SubId" name="SubId"><br>
+                
+                <label for="Customer_id">Customer ID</label>
+                <input type="number" id="Customer_id" name="Customer_id"><br>
+                
+                <label for="NumberOfIssues">Number of Issues</label>
+                <input type="number" id="NumberOfIssues" name="NumberOfIssues"><br>
+                
+                <label for="StartDate">Start Date</label>
+                <input type="date" id="StartDate" name="StartDate"><br>
+                
+                <label for="EndDate">End Date</label>
+                <input type="date" id="EndDate" name="EndDate"><br>
+                
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        
+        <button class="expandButton" id="form5">Newspaper</button>
+        <div class="content">
+            <form action="{{ url_for('read_newspaper') }}" method="GET">
+                <label for="NewsId">Newspaper ID</label>
+                <input type="number" id="NewsId" name="NewsId"><br>
+                
+                <label for="SubId">Subscription ID</label>
+                <input type="number" id="SubId" name="SubId"><br>
+                
+                <label for="Customer_id">Customer ID</label>
+                <input type="number" id="Customer_id" name="Customer_id"><br>
+                
+                <label for="NumberOfMonths">Number of Months</label>
+                <input type="number" id="NumberOfMonths" name="NumberOfMonths"><br>
+                
+                <label for="StartDate">Start Date</label>
+                <input type="date" id="StartDate" name="StartDate"><br>
+                
+                <label for="EndDate">End Date</label>
+                <input type="date" id="EndDate" name="EndDate"><br>
+                
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+            
     </div>
 
     <div class="text">
