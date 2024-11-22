@@ -215,36 +215,34 @@
             </form>
         </div>
 
-        <div class="forms">
-            <button class="expandButton" id="form1">Create Newspaper Subscription</button>
-            <div class="content">
-                <form action="{{ url_for('create_newspaper') }}" method="POST">
-                    <label for="StartDate">Start Date</label>
-                    <input type="date" id="StartDate" name="StartDate" required><br>
-        
-                    <label for="NumberOfMonths">Number of Months</label>
-                    <input type="number" id="NumberOfMonths" name="NumberOfMonths" required><br>
-        
-                    <!--needs to be calculated in handler. fix later-->
-                    <label for="Price">Price</label>
-                    <input type="number" step="0.01" id="Price" name="Price" required><br>
-        
-                    <label for="SubId">Subscription ID</label>
-                    <input type="number" id="SubId" name="SubId" required><br>
-        
-                    <label for="Customer_id">Customer ID</label>
-                    <input type="number" id="Customer_id" name="Customer_id" required><br>
-        
-                    <label for="SubType">Subscription Type</label>
-                    <select id="SubType" name="SubType" required>
-                        <option value="7-day">7-Day Subscription (All Days)</option>
-                        <option value="5-day">5-Day Subscription (Mon-Fri)</option>
-                        <option value="2-day">2-Day Subscription (Sat-Sun)</option>
-                    </select><br>
-        
-                    <button type="submit">Submit</button>
-                </form>
-            </div>
+        <button class="expandButton" id="form1">Newspaper Subscription</button>
+        <div class="content">
+            <form action="{{ url_for('create_newspaper') }}" method="POST">
+                <label for="StartDate">Start Date</label>
+                <input type="date" id="StartDate" name="StartDate" required><br>
+    
+                <label for="NumberOfMonths">Number of Months</label>
+                <input type="number" id="NumberOfMonths" name="NumberOfMonths" required><br>
+    
+                <!--needs to be calculated in handler. fix later-->
+                <label for="Price">Price</label>
+                <input type="number" step="0.01" id="Price" name="Price" required><br>
+    
+                <label for="SubId">Subscription ID</label>
+                <input type="number" id="SubId" name="SubId" required><br>
+    
+                <label for="Customer_id">Customer ID</label>
+                <input type="number" id="Customer_id" name="Customer_id" required><br>
+    
+                <label for="SubType">Subscription Type</label>
+                <select id="SubType" name="SubType" required>
+                    <option value="7-day">7-Day Subscription (All Days)</option>
+                    <option value="5-day">5-Day Subscription (Mon-Fri)</option>
+                    <option value="2-day">2-Day Subscription (Sat-Sun)</option>
+                </select><br>
+    
+                <button type="submit">Submit</button>
+            </form>
         </div>
         
     </div>
