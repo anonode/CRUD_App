@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from config import Config
 
 app = Flask(__name__)
@@ -93,11 +95,9 @@ def create_customer():
 
 @app.route('/create_subscription', methods=['POST'])
 def create_subscription():
-    # Collect form data for the subscription
     SubType = request.form['SubType']
     Customer_id = request.form['Customer_id']
     
-    # Insert into the subscriptions table
     cursor = mysql.connection.cursor()
     cursor.execute("INSERT INTO subscriptions (SubType, Customer_id) VALUES (%s, %s)", (SubType, Customer_id))
     mysql.connection.commit()
@@ -109,7 +109,6 @@ def create_subscription():
 
 @app.route('/create_publication', methods=['POST'])
 def create_publication():
-    # Collect form data for the magazine
     pubname = request.form['PubName']
     pubtype = request.form['PubType']
 
@@ -122,32 +121,159 @@ def create_publication():
     flash('Publication added successfully!', 'success')
     return redirect(url_for('create'))
 
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
-### handlers for read
+@app.route('/create_magazine', methods=['POST'])
+def create_magazine():
+    # Get form data
+    start_date_str = request.form['StartDate']
+    number_of_issues = request.form['NumberOfIssues']
+    price = request.form['Price']
+    sub_id = request.form['SubId']
+    customer_id = request.form['Customer_id']
+    
+    # Convert start date from string to datetime object
+    try:
+        start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()  # Expecting "YYYY-MM-DD" format
+    except ValueError:
+        flash('Invalid date format for Start Date. Please use YYYY-MM-DD.', 'error')
+        return redirect(url_for('create_magazine'))
 
-@app.route('/read_customer', methods=['GET']) # later: consider outputing the subscriptions that the customer has as well
+    # Calculate the end date based on the number of issues and the subscription type
+    try:
+        number_of_issues = int(number_of_issues)  # Convert to integer
+    except ValueError:
+        flash('Number of issues must be a number.', 'error')
+        return redirect(url_for('create_magazine'))
+
+    # Determine the subscription type (weekly, monthly, or quarterly)
+    subscription_type = request.form['SubType']  # Assuming there's a form field for subscription type
+    end_date = None
+
+    if subscription_type == 'weekly':
+        # Calculate end date for weekly subscription
+        end_date = start_date + timedelta(weeks=number_of_issues)
+    elif subscription_type == 'monthly':
+        # Calculate end date for monthly subscription
+        end_date = start_date + relativedelta(months=number_of_issues)
+    elif subscription_type == 'quarterly':
+        # Calculate end date for quarterly subscription
+        end_date = start_date + relativedelta(months=3 * number_of_issues)
+    else:
+        flash('Invalid subscription type. Please choose from weekly, monthly, or quarterly.', 'error')
+        return redirect(url_for('create_magazine'))
+
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute("""
+            INSERT INTO magazine (NumberOfIssues, StartDate, EndDate, Price, SubId, Customer_id)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (number_of_issues, start_date, end_date, price, sub_id, customer_id))
+        mysql.connection.commit()
+        flash('Magazine subscription created successfully!', 'success')
+    except Exception as e:
+        mysql.connection.rollback()
+        flash(f'An error occurred while creating the subscription: {str(e)}', 'error')
+    finally:
+        cur.close()
+
+    return redirect(url_for('create_magazine'))
+
+
+@app.route('/create_newspaper', methods=['POST'])
+def create_newspaper():
+    # Get form data
+    start_date_str = request.form['StartDate']
+    number_of_months = request.form['NumberOfMonths']
+    price = request.form['Price']
+    sub_id = request.form['SubId']
+    customer_id = request.form['Customer_id']
+    
+    # Convert start date from string to datetime object
+    try:
+        start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()  # Expecting "YYYY-MM-DD" format
+    except ValueError:
+        flash('Invalid date format for Start Date. Please use YYYY-MM-DD.', 'error')
+        return redirect(url_for('create_newspaper'))
+
+    # Calculate the end date based on the number of months
+    try:
+        number_of_months = int(number_of_months)  # Convert to integer
+    except ValueError:
+        flash('Number of months must be a number.', 'error')
+        return redirect(url_for('create_newspaper'))
+
+    # Calculate the end date by adding the number of months to the start date
+    end_date = start_date + relativedelta(months=number_of_months)
+
+    # Insert the new newspaper record into the database
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute("""
+            INSERT INTO newspaper (NumberOfMonths, StartDate, EndDate, Price, SubId, Customer_id)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (number_of_months, start_date, end_date, price, sub_id, customer_id))
+        mysql.connection.commit()
+        flash('Newspaper subscription created successfully!', 'success')
+    except Exception as e:
+        mysql.connection.rollback()
+        flash(f'An error occurred while creating the subscription: {str(e)}', 'error')
+    finally:
+        cur.close()
+
+    return redirect(url_for('create_newspaper'))
+
+
+######## HANDLERS FOR READ
+
+@app.route('/read_customer', methods=['GET'])
 def read_customer():
-    customer_id = request.args.get('Customer_id') # request.form['key'] syntax is only for retrieving form data from a POST request
+    customer_id = request.args.get('Customer_id')
     f_initial = request.args.get('FName')
     lname = request.args.get('LName')
     address = request.args.get('Address')
-    try:
-        customer_id = int(customer_id)
-    except ValueError:
-        flash(f'You did not enter an integer for Customer_ID. Here is what you entered: {customer_id}', 'error')
+
+    if customer_id:
+        try:
+            customer_id = int(customer_id)
+        except ValueError:
+            flash(f'You did not enter a valid integer for Customer_ID. Here is what you entered: {customer_id}', 'error')
+            return redirect(url_for('read_customer'))
+
+    set_clauses = []
+    params = []
+
+    if customer_id:
+        set_clauses.append("IdNo = %s")
+        params.append(customer_id)
+    if f_initial:
+        set_clauses.append("FName LIKE %s")
+        params.append(f"%{f_initial}%") 
+    if lname:
+        set_clauses.append("LName LIKE %s")
+        params.append(f"%{lname}%") 
+    if address:
+        set_clauses.append("Address LIKE %s")
+        params.append(f"%{address}%")
+
+    if set_clauses:
+        where_clause = " AND ".join(set_clauses)
+        query = f"SELECT * FROM customer WHERE {where_clause};"
+    else:
+        flash('You must enter at least one parameter to search for a customer.', 'error')
+        return redirect(url_for('read_customer'))
 
     cur = mysql.connection.cursor()
-    if f_initial == "":
-        if lname == "":
-            cur.execute("SELECT * FROM customer WHERE IdNo = %s;",(customer_id,))  # fix this later
-            customers = cur.fetchall()
-            cur.close()
-            return render_template('read.html', customers=customers)
-        else:
-            cur.execute("SELECT * FROM ") # finish this
-
+    cur.execute(query, tuple(params))
+    customers = cur.fetchall()
     cur.close()
-    return redirect(url_for('read')) ## might not want to redirect, could cause the query to be removed from the page
+
+    if customers:
+        return render_template('read.html', customers=customers)
+    else:
+        flash('No customers found based on the given parameters.', 'error')
+        return redirect(url_for('read_customer'))
 
 @app.route('/read_subscription', methods=['GET'])
 def read_subscription():
@@ -197,7 +323,133 @@ def read_publication():
     cur.close()
     
     return render_template('read.html', publications=pubs)
-    
+
+@app.route('/read_magazine', methods=['GET'])
+def read_magazine():
+    sub_id = request.args.get('SubId')
+    customer_id = request.args.get('Customer_id')
+    num_of_issues = request.args.get('NumberOfIssues')
+    start_date = request.args.get('StartDate')
+    end_date = request.args.get('EndDate')
+    price = request.args.get('Price')
+
+    try:
+        if sub_id:
+            sub_id = int(sub_id)
+    except ValueError:
+        flash(f'Invalid SubId. Here is what you entered: {sub_id}', 'error')
+        return redirect(url_for('read_magazine'))
+
+    try:
+        if customer_id:
+            customer_id = int(customer_id)
+    except ValueError:
+        flash(f'Invalid Customer_id. Here is what you entered: {customer_id}', 'error')
+        return redirect(url_for('read_magazine'))
+
+    set_clauses = []
+    params = []
+
+    if sub_id:
+        set_clauses.append("SubId = %s")
+        params.append(sub_id)
+    if customer_id:
+        set_clauses.append("Customer_id = %s")
+        params.append(customer_id)
+    if num_of_issues:
+        set_clauses.append("NumberOfIssues LIKE %s")
+        params.append(f"%{num_of_issues}%")
+    if start_date:
+        set_clauses.append("StartDate = %s")
+        params.append(start_date)
+    if end_date:
+        set_clauses.append("EndDate = %s")
+        params.append(end_date)
+    if price:
+        set_clauses.append("Price = %s")
+        params.append(price)
+
+    if set_clauses:
+        where_clause = " AND ".join(set_clauses)
+        query = f"SELECT * FROM magazine WHERE {where_clause};"
+    else:
+        flash('Please enter at least one search criterion for the magazine.', 'error')
+        return redirect(url_for('read_magazine'))
+
+    cur = mysql.connection.cursor()
+    cur.execute(query, tuple(params))
+    magazines = cur.fetchall()
+    cur.close()
+
+    if magazines:
+        return render_template('read.html', magazines=magazines)
+    else:
+        flash('No magazines found based on the given criteria.', 'error')
+        return redirect(url_for('read_magazine'))
+
+@app.route('/read_newspaper', methods=['GET'])
+def read_newspaper():
+    sub_id = request.args.get('SubId')
+    customer_id = request.args.get('Customer_id')
+    num_of_months = request.args.get('NumberOfMonths')
+    start_date = request.args.get('StartDate')
+    end_date = request.args.get('EndDate')
+    price = request.args.get('Price')
+
+    try:
+        if sub_id:
+            sub_id = int(sub_id)
+    except ValueError:
+        flash(f'Invalid SubId. Here is what you entered: {sub_id}', 'error')
+        return redirect(url_for('read_newspaper'))
+
+    try:
+        if customer_id:
+            customer_id = int(customer_id)
+    except ValueError:
+        flash(f'Invalid Customer_id. Here is what you entered: {customer_id}', 'error')
+        return redirect(url_for('read_newspaper'))
+
+    set_clauses = []
+    params = []
+
+    if sub_id:
+        set_clauses.append("SubId = %s")
+        params.append(sub_id)
+    if customer_id:
+        set_clauses.append("Customer_id = %s")
+        params.append(customer_id)
+    if num_of_months:
+        set_clauses.append("NumberOfMonths = %s")
+        params.append(num_of_months)
+    if start_date:
+        set_clauses.append("StartDate = %s")
+        params.append(start_date)
+    if end_date:
+        set_clauses.append("EndDate = %s")
+        params.append(end_date)
+    if price:
+        set_clauses.append("Price = %s")
+        params.append(price)
+
+    if set_clauses:
+        where_clause = " AND ".join(set_clauses)
+        query = f"SELECT * FROM newspaper WHERE {where_clause};"
+    else:
+        flash('Please enter at least one search criterion for the newspaper.', 'error')
+        return redirect(url_for('read_newspaper'))
+
+    cur = mysql.connection.cursor()
+    cur.execute(query, tuple(params))
+    newspapers = cur.fetchall()
+    cur.close()
+
+    if newspapers:
+        return render_template('read.html', newspapers=newspapers)
+    else:
+        flash('No newspapers found based on the given criteria.', 'error')
+        return redirect(url_for('read_newspaper'))
+
 ### handlers for update
 
 @app.route('/update_customer', methods=['POST'])
@@ -270,10 +522,115 @@ def update_publication():
 
 @app.route('/update_magazine', methods=['POST'])
 def update_magazine():
-    pass
+    mag_id = request.form['MagId']
+    num_of_issues = request.form['NumberOfIssues']
+    start_date = request.form['StartDate']
+    end_date = request.form['EndDate']
+    price = request.form['Price']
+    sub_id = request.form['SubId']
+    customer_id = request.form['Customer_id']
+
+    if not mag_id.isdigit():
+        flash(f'You did not enter a natural number for the MagId. Here is what you entered: {mag_id}')
+        return redirect(url_for('update_magazine_page'))
+    
+    if num_of_issues == "" and start_date == "" and end_date == "" and price == "":
+        flash('You need to enter at least one parameter to update', 'error')
+        return redirect(url_for('update_magazine_page'))
+    
+    set_clauses = []
+    params = []
+
+    if num_of_issues != "":
+        set_clauses.append("NumberOfIssues = %s")
+        params.append(num_of_issues)
+
+    if start_date != "":
+        set_clauses.append("StartDate = %s")
+        params.append(start_date)
+
+    if end_date != "":
+        set_clauses.append("EndDate = %s")
+        params.append(end_date)
+
+    if price != "":
+        set_clauses.append("Price = %s")
+        params.append(price)
+
+    if sub_id != "":
+        set_clauses.append("SubId = %s")
+        params.append(sub_id)
+
+    if customer_id != "":
+        set_clauses.append("Customer_id = %s")
+        params.append(customer_id)
+
+    set_clause = ", ".join(set_clauses)
+    cur = mysql.connection.cursor()
+    query = f"UPDATE magazine SET {set_clause} WHERE MagId = %s"
+    params.append(mag_id)
+    cur.execute(query, tuple(params))
+    mysql.connection.commit()
+    cur.close()
+    flash('Magazine update done successfully', 'success')
+    return redirect(url_for('magazine_page'))
+
 @app.route('/update_newspaper', methods=['POST'])
 def update_newspaper():
-    pass
+    news_id = request.form['NewsId']
+    num_of_months = request.form['NumberOfMonths']
+    start_date = request.form['StartDate']
+    end_date = request.form['EndDate']
+    price = request.form['Price']
+    sub_id = request.form['SubId']
+    customer_id = request.form['Customer_id']
+
+    if not news_id.isdigit():
+        flash(f'You did not enter a natural number for the NewsId. Here is what you entered: {news_id}')
+        return redirect(url_for('update_newspaper_page'))
+    
+    if num_of_months == "" and start_date == "" and end_date == "" and price == "":
+        flash('You need to enter at least one parameter to update', 'error')
+        return redirect(url_for('update_newspaper_page'))
+    
+    set_clauses = []
+    params = []
+
+    if num_of_months != "":
+        set_clauses.append("NumberOfMonths = %s")
+        params.append(num_of_months)
+
+    if start_date != "":
+        set_clauses.append("StartDate = %s")
+        params.append(start_date)
+
+    if end_date != "":
+        set_clauses.append("EndDate = %s")
+        params.append(end_date)
+
+    if price != "":
+        set_clauses.append("Price = %s")
+        params.append(price)
+
+    # Optional: update the SubId or Customer_id if they are included (ensure validation)
+    if sub_id != "":
+        set_clauses.append("SubId = %s")
+        params.append(sub_id)
+
+    if customer_id != "":
+        set_clauses.append("Customer_id = %s")
+        params.append(customer_id)
+
+    set_clause = ", ".join(set_clauses)
+    cur = mysql.connection.cursor()
+    query = f"UPDATE newspaper SET {set_clause} WHERE NewsId = %s"
+    params.append(news_id)  # Add the NewsId to the parameters
+    cur.execute(query, tuple(params))
+    mysql.connection.commit()
+    cur.close()
+    flash('Newspaper update done successfully', 'success')
+    return redirect(url_for('newspaper_page'))  # Adjust redirection as needed
+
 
 
 ### handlers for delete
@@ -364,6 +721,71 @@ def delete_publication():
     cur.close()
                 
     return redirect(url_for('delete'))
+
+@app.route('/delete_magazine', methods=['POST'])
+def delete_magazine():
+    mag_id = request.form['MagId']
+    sub_id = request.form['SubId']
+    customer_id = request.form['Customer_id']
+    
+    try:
+        mag_id = int(mag_id)
+    except ValueError:
+        flash('Magazine ID should be an integer. Here is what you entered: ' + mag_id, 'error')
+        return redirect(url_for('delete'))
+    
+    if customer_id == "":
+        flash("Customer ID is required to delete the magazine subscription.", 'error')
+        return redirect(url_for('delete'))
+    
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM magazine WHERE MagId = %s AND SubId = %s AND Customer_id = %s", (mag_id, sub_id, customer_id))
+    magazine = cur.fetchone()
+    
+    if not magazine:
+        flash("No matching magazine found to delete.", 'error')
+        cur.close()
+        return redirect(url_for('delete'))
+
+    cur.execute("DELETE FROM magazine WHERE MagId = %s AND SubId = %s AND Customer_id = %s", (mag_id, sub_id, customer_id))
+    mysql.connection.commit()
+    cur.close()
+    flash("Magazine record deleted successfully.", 'success')
+    
+    return redirect(url_for('delete'))
+
+@app.route('/delete_newspaper', methods=['POST'])
+def delete_newspaper():
+    news_id = request.form['NewsId']
+    sub_id = request.form['SubId']
+    customer_id = request.form['Customer_id']
+    
+    try:
+        news_id = int(news_id)
+    except ValueError:
+        flash('Newspaper ID should be an integer. Here is what you entered: ' + news_id, 'error')
+        return redirect(url_for('delete'))
+    
+    if customer_id == "":
+        flash("Customer ID is required to delete the newspaper subscription.", 'error')
+        return redirect(url_for('delete'))
+    
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM newspaper WHERE NewsId = %s AND SubId = %s AND Customer_id = %s", (news_id, sub_id, customer_id))
+    newspaper = cur.fetchone()
+    
+    if not newspaper:
+        flash("No matching newspaper found to delete.", 'error')
+        cur.close()
+        return redirect(url_for('delete'))
+
+    cur.execute("DELETE FROM newspaper WHERE NewsId = %s AND SubId = %s AND Customer_id = %s", (news_id, sub_id, customer_id))
+    mysql.connection.commit()
+    cur.close()
+    flash("Newspaper record deleted successfully.", 'success')
+    
+    return redirect(url_for('delete'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
