@@ -180,49 +180,52 @@ def create_magazine():
 
     return redirect(url_for('create_magazine'))
 
-
 @app.route('/create_newspaper', methods=['POST'])
 def create_newspaper():
-    # Get form data
-    start_date_str = request.form['StartDate']
-    number_of_months = request.form['NumberOfMonths']
-    price = request.form['Price']
-    sub_id = request.form['SubId']
-    customer_id = request.form['Customer_id']
+    start_date = request.form['StartDate']
+    number_of_months = int(request.form['NumberOfMonths'])
+    price_per_month = float(request.form['Price'])
+    sub_id = int(request.form['SubId'])
+    customer_id = int(request.form['Customer_id'])
+    subscription_type = request.form['SubType']  # 7-day, 5-day, 2-day
     
-    # Convert start date from string to datetime object
-    try:
-        start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()  # Expecting "YYYY-MM-DD" format
-    except ValueError:
-        flash('Invalid date format for Start Date. Please use YYYY-MM-DD.', 'error')
-        return redirect(url_for('create_newspaper'))
+    start_date = datetime.strptime(start_date, '%Y-%m-%d')
 
-    # Calculate the end date based on the number of months
-    try:
-        number_of_months = int(number_of_months)  # Convert to integer
-    except ValueError:
-        flash('Number of months must be a number.', 'error')
-        return redirect(url_for('create_newspaper'))
+    # Calculate end date based on the subscription duration
+    if subscription_type == '2-day':  # Weekend subscription
+        # Calculate the end date by adding the number of months to the start date
+        end_date = start_date + relativedelta(months=number_of_months)
 
-    # Calculate the end date by adding the number of months to the start date
-    end_date = start_date + relativedelta(months=number_of_months)
+        # Calculate the number of weekends (Saturday and Sunday) in the specified months
+        weekends_count = 0
+        current_date = start_date
+        while current_date <= end_date:
+            if current_date.weekday() == 5 or current_date.weekday() == 6:  # Saturday (5) or Sunday (6)
+                weekends_count += 1
+            current_date += timedelta(days=1)
+        
+        # For a 2-day subscription, you charge for weekends (Saturdays and Sundays) within the month(s)
+        total_price = weekends_count * (price_per_month / 4)  # Roughly assuming 4 weekends per month
 
-    # Insert the new newspaper record into the database
+    elif subscription_type == '5-day':  # Weekdays (Monday to Friday) subscription
+        end_date = start_date + relativedelta(months=number_of_months)
+        total_price = price_per_month * number_of_months  # Price for weekdays
+
+    elif subscription_type == '7-day':  # 7-day subscription (all days)
+        end_date = start_date + relativedelta(months=number_of_months)
+        total_price = price_per_month * number_of_months  # Price for all days
+
     cur = mysql.connection.cursor()
-    try:
-        cur.execute("""
-            INSERT INTO newspaper (NumberOfMonths, StartDate, EndDate, Price, SubId, Customer_id)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (number_of_months, start_date, end_date, price, sub_id, customer_id))
-        mysql.connection.commit()
-        flash('Newspaper subscription created successfully!', 'success')
-    except Exception as e:
-        mysql.connection.rollback()
-        flash(f'An error occurred while creating the subscription: {str(e)}', 'error')
-    finally:
-        cur.close()
+    cur.execute("""
+        INSERT INTO newspaper (NumberOfMonths, StartDate, EndDate, Price, SubId, Customer_id)
+        VALUES (%s, %s, %s, %s, %s, %s)
+    """, (number_of_months, start_date, end_date, total_price, sub_id, customer_id))
+    mysql.connection.commit()
+    cur.close()
 
-    return redirect(url_for('create_newspaper'))
+    flash('Newspaper subscription created successfully!', 'success')
+    return redirect(url_for('some_redirect_function'))
+
 
 
 ######## HANDLERS FOR READ
@@ -234,6 +237,11 @@ def read_customer():
     lname = request.args.get('LName')
     address = request.args.get('Address')
 
+    if customer_id == "" and f_initial == "" and lname == "" and address == "":
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM customer")
+        customers = cur.fetchall()
+        return render_template('read.html', customers=customers)
     if customer_id:
         try:
             customer_id = int(customer_id)
@@ -273,7 +281,7 @@ def read_customer():
         return render_template('read.html', customers=customers)
     else:
         flash('No customers found based on the given parameters.', 'error')
-        return redirect(url_for('read_customer'))
+        return redirect(url_for('read'))
 
 @app.route('/read_subscription', methods=['GET'])
 def read_subscription():
@@ -659,6 +667,7 @@ def delete_customer():
                 cur = mysql.connection.cursor()
                 cur.execute("DELETE FROM Customer WHERE IdNo = %s AND FName = %s AND LName = %s AND Address = %s", (customer_id, f_initial, lname, address))
                 mysql.connection.commit()
+                flash('Deletion successful', 'success')
             else:
                 cur = mysql.connection.cursor()
                 cur.execute("DELETE FROM Customer WHERE IdNo = %s AND FName = %s AND LName = %s", (customer_id, f_initial, lname))
