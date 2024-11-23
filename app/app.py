@@ -476,7 +476,6 @@ def update_customer():
     
     set_clauses = []
     params = []
-
     if f_initial != "":
         set_clauses.append("FName = %s")
         params.append(f_initial)
@@ -489,14 +488,16 @@ def update_customer():
         set_clauses.append("Address = %s")
         params.append(address)
     
+    params.append(customer_id)
+
     setclause = ", ".join(set_clauses)
-    cur = mysql.connection.cursor
+    cur = mysql.connection.cursor()
     query = f"UPDATE customer SET {setclause} WHERE IdNo = %s"
-    cur.execute(query, (customer_id, ))
+    cur.execute(query, tuple(params))
     mysql.connection.commit()
     cur.close()
     flash('Update done successfully', 'success')
-    return redirect(url_for('create'))
+    return redirect(url_for('update'))
     
 @app.route('/update_subscription', methods=['POST'])
 def update_subscription():
@@ -540,11 +541,11 @@ def update_magazine():
 
     if not mag_id.isdigit():
         flash(f'You did not enter a natural number for the MagId. Here is what you entered: {mag_id}')
-        return redirect(url_for('update_magazine_page'))
+        return redirect(url_for('update'))
     
     if num_of_issues == "" and start_date == "" and end_date == "" and price == "":
         flash('You need to enter at least one parameter to update', 'error')
-        return redirect(url_for('update_magazine_page'))
+        return redirect(url_for('update'))
     
     set_clauses = []
     params = []
@@ -581,7 +582,7 @@ def update_magazine():
     mysql.connection.commit()
     cur.close()
     flash('Magazine update done successfully', 'success')
-    return redirect(url_for('magazine_page'))
+    return redirect(url_for('update'))
 
 @app.route('/update_newspaper', methods=['POST'])
 def update_newspaper():
@@ -595,11 +596,11 @@ def update_newspaper():
 
     if not news_id.isdigit():
         flash(f'You did not enter a natural number for the NewsId. Here is what you entered: {news_id}')
-        return redirect(url_for('update_newspaper_page'))
+        return redirect(url_for('update'))
     
     if num_of_months == "" and start_date == "" and end_date == "" and price == "":
         flash('You need to enter at least one parameter to update', 'error')
-        return redirect(url_for('update_newspaper_page'))
+        return redirect(url_for('update'))
     
     set_clauses = []
     params = []
@@ -637,7 +638,7 @@ def update_newspaper():
     mysql.connection.commit()
     cur.close()
     flash('Newspaper update done successfully', 'success')
-    return redirect(url_for('newspaper_page'))  # Adjust redirection as needed
+    return redirect(url_for('update'))  # Adjust redirection as needed
 
 
 
