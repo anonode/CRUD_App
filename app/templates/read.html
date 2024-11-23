@@ -13,6 +13,19 @@
 
 
     <!-- show flash messages. hopefully record creation worked 😶 -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div>
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    
     {% if customers %}
         <div class="table-container">
             <table>
