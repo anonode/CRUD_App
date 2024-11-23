@@ -138,14 +138,14 @@ def create_magazine():
         start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()  # Expecting "YYYY-MM-DD" format
     except ValueError:
         flash('Invalid date format for Start Date. Please use YYYY-MM-DD.', 'error')
-        return redirect(url_for('create_magazine'))
+        return redirect(url_for('create'))
 
     # Calculate the end date based on the number of issues and the subscription type
     try:
         number_of_issues = int(number_of_issues)  # Convert to integer
     except ValueError:
         flash('Number of issues must be a number.', 'error')
-        return redirect(url_for('create_magazine'))
+        return redirect(url_for('create'))
 
     # Determine the subscription type (weekly, monthly, or quarterly)
     subscription_type = request.form['SubType']  # Assuming there's a form field for subscription type
@@ -162,7 +162,7 @@ def create_magazine():
         end_date = start_date + relativedelta(months=3 * number_of_issues)
     else:
         flash('Invalid subscription type. Please choose from weekly, monthly, or quarterly.', 'error')
-        return redirect(url_for('create_magazine'))
+        return redirect(url_for('create'))
 
     cur = mysql.connection.cursor()
     try:
@@ -178,7 +178,7 @@ def create_magazine():
     finally:
         cur.close()
 
-    return redirect(url_for('create_magazine'))
+    return redirect(url_for('create'))
 
 @app.route('/create_newspaper', methods=['POST'])
 def create_newspaper():
@@ -224,7 +224,7 @@ def create_newspaper():
     cur.close()
 
     flash('Newspaper subscription created successfully!', 'success')
-    return redirect(url_for('some_redirect_function'))
+    return redirect(url_for('create'))
 
 
 
@@ -247,7 +247,7 @@ def read_customer():
             customer_id = int(customer_id)
         except ValueError:
             flash(f'You did not enter a valid integer for Customer_ID. Here is what you entered: {customer_id}', 'error')
-            return redirect(url_for('read_customer'))
+            return redirect(url_for('read'))
 
     set_clauses = []
     params = []
@@ -270,7 +270,7 @@ def read_customer():
         query = f"SELECT * FROM customer WHERE {where_clause};"
     else:
         flash('You must enter at least one parameter to search for a customer.', 'error')
-        return redirect(url_for('read_customer'))
+        return redirect(url_for('read'))
 
     cur = mysql.connection.cursor()
     cur.execute(query, tuple(params))
@@ -346,14 +346,14 @@ def read_magazine():
             sub_id = int(sub_id)
     except ValueError:
         flash(f'Invalid SubId. Here is what you entered: {sub_id}', 'error')
-        return redirect(url_for('read_magazine'))
+        return redirect(url_for('read'))
 
     try:
         if customer_id:
             customer_id = int(customer_id)
     except ValueError:
         flash(f'Invalid Customer_id. Here is what you entered: {customer_id}', 'error')
-        return redirect(url_for('read_magazine'))
+        return redirect(url_for('read'))
 
     set_clauses = []
     params = []
@@ -382,7 +382,7 @@ def read_magazine():
         query = f"SELECT * FROM magazine WHERE {where_clause};"
     else:
         flash('Please enter at least one search criterion for the magazine.', 'error')
-        return redirect(url_for('read_magazine'))
+        return redirect(url_for('read'))
 
     cur = mysql.connection.cursor()
     cur.execute(query, tuple(params))
@@ -393,7 +393,7 @@ def read_magazine():
         return render_template('read.html', magazines=magazines)
     else:
         flash('No magazines found based on the given criteria.', 'error')
-        return redirect(url_for('read_magazine'))
+        return redirect(url_for('read'))
 
 @app.route('/read_newspaper', methods=['GET'])
 def read_newspaper():
@@ -409,14 +409,14 @@ def read_newspaper():
             sub_id = int(sub_id)
     except ValueError:
         flash(f'Invalid SubId. Here is what you entered: {sub_id}', 'error')
-        return redirect(url_for('read_newspaper'))
+        return redirect(url_for('read'))
 
     try:
         if customer_id:
             customer_id = int(customer_id)
     except ValueError:
         flash(f'Invalid Customer_id. Here is what you entered: {customer_id}', 'error')
-        return redirect(url_for('read_newspaper'))
+        return redirect(url_for('read'))
 
     set_clauses = []
     params = []
@@ -445,7 +445,7 @@ def read_newspaper():
         query = f"SELECT * FROM newspaper WHERE {where_clause};"
     else:
         flash('Please enter at least one search criterion for the newspaper.', 'error')
-        return redirect(url_for('read_newspaper'))
+        return redirect(url_for('read'))
 
     cur = mysql.connection.cursor()
     cur.execute(query, tuple(params))
@@ -456,7 +456,7 @@ def read_newspaper():
         return render_template('read.html', newspapers=newspapers)
     else:
         flash('No newspapers found based on the given criteria.', 'error')
-        return redirect(url_for('read_newspaper'))
+        return redirect(url_for('read'))
 
 ### handlers for update
 
