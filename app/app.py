@@ -252,16 +252,16 @@ def read_customer():
     set_clauses = []
     params = []
 
-    if customer_id:
+    if customer_id != "":
         set_clauses.append("IdNo = %s")
         params.append(customer_id)
-    if f_initial:
+    if f_initial != "":
         set_clauses.append("FName LIKE %s")
         params.append(f"%{f_initial}%") 
-    if lname:
+    if lname != "":
         set_clauses.append("LName LIKE %s")
         params.append(f"%{lname}%") 
-    if address:
+    if address != "":
         set_clauses.append("Address LIKE %s")
         params.append(f"%{address}%")
 
