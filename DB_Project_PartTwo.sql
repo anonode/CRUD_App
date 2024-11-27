@@ -21,6 +21,7 @@ NumberOfIssues VARCHAR(255) NOT NULL,
 StartDate DATE NOT NULL,
 EndDate DATE NOT NULL,
 Price DECIMAL(10,2) NOT NULL,
+Frequency VARCHAR(45),
 SubId INT NOT NULL,
 Customer_id INT NOT NULL,
 PRIMARY KEY (MagId),
@@ -33,6 +34,7 @@ NumberOfMonths INT NOT NULL,
 StartDate date NOT NULL,
 EndDate DATE NOT NULL,
 Price DECIMAL(10,2) NOT NULL,
+Frequency VARCHAR(45),
 SubId INT NOT NULL,
 Customer_id INT NOT NULL,
 PRIMARY KEY (NewsId),
@@ -41,26 +43,6 @@ FOREIGN KEY (Customer_id) REFERENCES customer(IdNo) ON DELETE CASCADE);
 
 CREATE TABLE publications (
 PubName VARCHAR(255) NOT NULL PRIMARY KEY,
-PubType VARCHAR(45)
+PubType VARCHAR(45),
+Frequency VARCHAR(45)
 );
-
-use magazine_newspapers;
-ALTER TABLE `magazine_newspapers`.`magazine` 
-ADD CONSTRAINT `PubName`
-  FOREIGN KEY (`PubName`)
-  REFERENCES `magazine_newspapers`.`publications` (`PubName`)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION;
-  
-insert into publications (PubName, PubType) values ('Joe Rogan', 'Podcast');
-insert into publications (PubName, PubType) values ('Talk Tuah', 'Podcast');
-
-select * from customer;
-select * from publications;
-select * from subscriptions;
-select * from customer where IdNo = 1;
-select count(distinct Fname) + sum(if(Fname is null, 1, 0)) as count from customer;
-insert into customer (LName, FName, Address) values ('jogan', 'b', 'bikini bottom');
-insert into subscriptions (SubType, Customer_id) values ('Magazine', 1);
-  
-
