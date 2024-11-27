@@ -142,9 +142,11 @@ def create_magazine():
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM subscriptions WHERE SubId = %s', (sub_id,))
     check = cur.fetchone()
+    cur.close()
     if not check:
         flash('Subscription ID does not exist in database', 'error')
         return redirect(url_for('create'))
+    
     
     
     # convert date to datetime object
@@ -200,6 +202,22 @@ def create_newspaper():
     sub_id = int(request.form['SubId'])
     customer_id = int(request.form['Customer_id'])
     subscription_type = request.form['SubType']  # 7-day, 5-day, 2-day
+    
+    
+    # check for valid subid
+    if sub_id == "":
+        flash('please enter a subscription ID', 'error')
+        return redirect(url_for('create'))
+    
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM subscriptions WHERE SubId = %s', (sub_id,))
+    check = cur.fetchone()
+    cur.close()
+    if not check:
+        flash('Subscription ID does not exist in database', 'error')
+        return redirect(url_for('create'))    
+    
+    
     
     start_date = datetime.strptime(start_date, '%Y-%m-%d')
 
