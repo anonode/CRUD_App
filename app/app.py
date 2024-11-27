@@ -126,14 +126,28 @@ from dateutil.relativedelta import relativedelta
 
 @app.route('/create_magazine', methods=['POST'])
 def create_magazine():
-    # Get form data
     start_date_str = request.form['StartDate']
     number_of_issues = request.form['NumberOfIssues']
     price = request.form['Price']
     sub_id = request.form['SubId']
     customer_id = request.form['Customer_id']
+    subscription_type = request.form['SubType']
     
-    # Convert start date from string to datetime object
+    
+    # check for subid
+    if sub_id == "":
+        flash('please enter a subscription ID', 'error')
+        return redirect(url_for('create'))
+    
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM subscriptions WHERE SubId = %s', (sub_id,))
+    check = cur.fetchone()
+    if not check:
+        flash('Subscription ID does not exist in database', 'error')
+        return redirect(url_for('create'))
+    
+    
+    # convert date to datetime object
     try:
         start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()  # Expecting "YYYY-MM-DD" format
     except ValueError:
@@ -147,8 +161,6 @@ def create_magazine():
         flash('Number of issues must be a number.', 'error')
         return redirect(url_for('create'))
 
-    # Determine the subscription type (weekly, monthly, or quarterly)
-    subscription_type = request.form['SubType']  # Assuming there's a form field for subscription type
     end_date = None
 
     if subscription_type == 'weekly':
