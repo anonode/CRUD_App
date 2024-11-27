@@ -131,7 +131,7 @@ def create_magazine():
     price = request.form['Price']
     sub_id = request.form['SubId']
     customer_id = request.form['Customer_id']
-    subscription_type = request.form['SubType']
+    frequency = request.form['frequency']
     
     
     # check for subid
@@ -165,13 +165,13 @@ def create_magazine():
 
     end_date = None
 
-    if subscription_type == 'weekly':
+    if frequency == 'weekly':
         # Calculate end date for weekly subscription
         end_date = start_date + timedelta(weeks=number_of_issues)
-    elif subscription_type == 'monthly':
+    elif frequency == 'monthly':
         # Calculate end date for monthly subscription
         end_date = start_date + relativedelta(months=number_of_issues)
-    elif subscription_type == 'quarterly':
+    elif frequency == 'quarterly':
         # Calculate end date for quarterly subscription
         end_date = start_date + relativedelta(months=3 * number_of_issues)
     else:
@@ -181,9 +181,9 @@ def create_magazine():
     cur = mysql.connection.cursor()
     try:
         cur.execute("""
-            INSERT INTO magazine (NumberOfIssues, StartDate, EndDate, Price, SubType, SubId, Customer_id)
+            INSERT INTO magazine (NumberOfIssues, StartDate, EndDate, Price, Frequency, SubId, Customer_id)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (number_of_issues, start_date, end_date, price, subscription_type, sub_id, customer_id))
+        """, (number_of_issues, start_date, end_date, price, frequency, sub_id, customer_id))
         mysql.connection.commit()
         flash('Magazine subscription created successfully!', 'success')
     except Exception as e:
@@ -201,7 +201,7 @@ def create_newspaper():
     price_per_month = float(request.form['Price'])
     sub_id = int(request.form['SubId'])
     customer_id = int(request.form['Customer_id'])
-    subscription_type = request.form['SubType']  # 7-day, 5-day, 2-day
+    frequency = request.form['frequency']  # 7-day, 5-day, 2-day
     
     
     # check for valid subid
@@ -222,7 +222,7 @@ def create_newspaper():
     start_date = datetime.strptime(start_date, '%Y-%m-%d')
 
     # Calculate end date based on the subscription duration
-    if subscription_type == '2-day':  # Weekend subscription
+    if frequency == '2-day':  # Weekend subscription
         # Calculate the end date by adding the number of months to the start date
         end_date = start_date + relativedelta(months=number_of_months)
 
@@ -237,11 +237,11 @@ def create_newspaper():
         # For a 2-day subscription, you charge for weekends (Saturdays and Sundays) within the month(s)
         total_price = weekends_count * (price_per_month / 4)  # Roughly assuming 4 weekends per month
 
-    elif subscription_type == '5-day':  # Weekdays (Monday to Friday) subscription
+    elif frequency == '5-day':  # Weekdays (Monday to Friday) subscription
         end_date = start_date + relativedelta(months=number_of_months)
         total_price = price_per_month * number_of_months  # Price for weekdays
 
-    elif subscription_type == '7-day':  # 7-day subscription (all days)
+    elif frequency == '7-day':  # 7-day subscription (all days)
         end_date = start_date + relativedelta(months=number_of_months)
         total_price = price_per_month * number_of_months  # Price for all days
 
@@ -249,7 +249,7 @@ def create_newspaper():
     cur.execute("""
         INSERT INTO newspaper (NumberOfMonths, StartDate, EndDate, Price, SubType, SubId, Customer_id)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
-    """, (number_of_months, start_date, end_date, total_price, subscription_type, sub_id, customer_id))
+    """, (number_of_months, start_date, end_date, total_price, frequency, sub_id, customer_id))
     mysql.connection.commit()
     cur.close()
 
