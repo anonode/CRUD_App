@@ -225,6 +225,12 @@
                 <label for="Customer_id">Customer ID</label>
                 <input type="number" id="Customer_id" name="Customer_id" required><br>
 
+                <label for="frequency">Subscription Frequency</label>
+                <select id="frequency" name="frequency" required>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                </select><br>
                 <button type="submit">Submit</button>
             </form>
         </div>
@@ -248,8 +254,8 @@
                 <label for="Customer_id">Customer ID</label>
                 <input type="number" id="Customer_id" name="Customer_id" required><br>
     
-                <label for="SubType">Subscription Type</label>
-                <select id="SubType" name="SubType" required>
+                <label for="frequency">Subscription Frequency</label>
+                <select id="frequency" name="frequency" required>
                     <option value="7-day">7-Day Subscription (All Days)</option>
                     <option value="5-day">5-Day Subscription (Mon-Fri)</option>
                     <option value="2-day">2-Day Subscription (Sat-Sun)</option>
