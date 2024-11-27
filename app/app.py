@@ -181,9 +181,9 @@ def create_magazine():
     cur = mysql.connection.cursor()
     try:
         cur.execute("""
-            INSERT INTO magazine (NumberOfIssues, StartDate, EndDate, Price, SubId, Customer_id)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (number_of_issues, start_date, end_date, price, sub_id, customer_id))
+            INSERT INTO magazine (NumberOfIssues, StartDate, EndDate, Price, SubType, SubId, Customer_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (number_of_issues, start_date, end_date, price, subscription_type, sub_id, customer_id))
         mysql.connection.commit()
         flash('Magazine subscription created successfully!', 'success')
     except Exception as e:
@@ -247,9 +247,9 @@ def create_newspaper():
 
     cur = mysql.connection.cursor()
     cur.execute("""
-        INSERT INTO newspaper (NumberOfMonths, StartDate, EndDate, Price, SubId, Customer_id)
-        VALUES (%s, %s, %s, %s, %s, %s)
-    """, (number_of_months, start_date, end_date, total_price, sub_id, customer_id))
+        INSERT INTO newspaper (NumberOfMonths, StartDate, EndDate, Price, SubType, SubId, Customer_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """, (number_of_months, start_date, end_date, total_price, subscription_type, sub_id, customer_id))
     mysql.connection.commit()
     cur.close()
 
