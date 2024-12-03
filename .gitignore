@@ -7,3 +7,4 @@ __pycache__/
 Thumbs.db
 .env
 app/config.py
+app/exercícios
