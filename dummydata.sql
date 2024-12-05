@@ -1,47 +1,24 @@
--- Insert customers
-INSERT INTO customer (FName, LName, Address)
-VALUES 
-('John', 'Doe', '123 Elm Street'),
-('Jane', 'Smith', '456 Oak Avenue'),
-('Michael', 'Brown', '789 Maple Road'),
-('Emily', 'Davis', '321 Pine Lane'),
-('Chris', 'Wilson', '654 Birch Blvd'),
-('Sarah', 'Johnson', '987 Cedar Street'),
-('Matthew', 'Taylor', '741 Cherry Court'),
-('Laura', 'White', '852 Ash Terrace'),
-('Daniel', 'Harris', '369 Walnut Drive'),
-('Jessica', 'Martin', '753 Spruce Lane'),
-('Andrew', 'Thompson', '951 Poplar Place'),
-('Sophia', 'Garcia', '159 Cypress Way'),
-('Ethan', 'Martinez', '268 Fir Circle'),
-('Olivia', 'Clark', '357 Palm Grove'),
-('Noah', 'Rodriguez', '486 Sycamore Ave'),
-('Emma', 'Lewis', '697 Magnolia Blvd'),
-('Liam', 'Walker', '875 Dogwood Trail'),
-('Ava', 'Hall', '984 Hickory Road'),
-('Isabella', 'Allen', '123 Willow Way'),
-('Mason', 'Young', '246 Redwood Street');
-
--- Insert publications
-INSERT INTO publications (PubName, PubType)
-VALUES
-('Tech Today', 'Magazine'),
-('Health Weekly', 'Magazine'),
-('Sports Monthly', 'Magazine'),
-('Cooking Quarterly', 'Magazine'),
-('Fashion Weekly', 'Magazine'),
-('Travel Insights', 'Magazine'),
-('Business Monthly', 'Magazine'),
-('Science Quarterly', 'Magazine'),
-('Art Weekly', 'Magazine'),
-('Gadget World', 'Magazine'),
-('City Chronicle', 'Newspaper'),
-('Daily Herald', 'Newspaper'),
-('Weekly Observer', 'Newspaper'),
-('Morning Times', 'Newspaper'),
-('Weekend Review', 'Newspaper'),
-('Global News', 'Newspaper'),
-('Community Bulletin', 'Newspaper');
+-- Insert Customers
+INSERT INTO customer (FName, LName, Address) VALUES
+('J', 'Doe', '123 Maple St, Toronto, ON, Canada, M5A 1A1'),
+('J', 'Smith', '456 Oak Avenue, London, England, SW1A 1AA'),
+('M', 'Johnson', '789 Pine Street, Sydney, NSW, Australia, 2000'),
+('S', 'Williams', '101 Birch Road, Cape Town, Western Cape, South Africa, 8001'),
+('D', 'Brown', '202 Cedar Boulevard, Paris, France, 75001'),
+('E', 'Jones', '303 Elm Crescent, New York, NY, USA, 10001'),
+('W', 'Garcia', '404 Walnut Drive, Madrid, Spain, 28001'),
+('M', 'Martinez', '505 Ash Court, Buenos Aires, Argentina, C1406'),
+('J', 'Miller', '606 Pinewood Street, Tokyo, Japan, 100-0001'),
+('S', 'Davis', '707 Oakwood Lane, Berlin, Germany, 10115'),
+('B', 'Rodriguez', '808 Birch Avenue, Mexico City, Mexico, 01000'),
+('O', 'Lee', '909 Maplewood Drive, Seoul, South Korea, 03000'),
+('L', 'Hernandez', '1010 Cedar Grove, Buenos Aires, Argentina, C1407'),
+('C', 'Lopez', '1111 Elmwood Lane, Rome, Italy, 00100'),
+('L', 'Gonzalez', '1212 Walnut Road, Lisbon, Portugal, 1100-001'),
+('A', 'Perez', '1313 Ash Street, São Paulo, Brazil, 01000-000'),
+('H', 'Taylor', '1414 Elm Terrace, Toronto, ON, Canada, M4C 1A1'),
+('A', 'Anderson', '1515 Pine Grove, Los Angeles, CA, USA, 90001'),
+('E', 'Thomas', '1616 Oak Boulevard, Hong Kong, China, 999077');
 
 -- Insert subscriptions
 INSERT INTO subscriptions (SubType, Customer_id)
@@ -66,30 +43,38 @@ VALUES
 ('Newspaper', 9),
 ('Magazine', 10);
 
--- Insert magazine subscriptions
-INSERT INTO magazine (NumberOfIssues, StartDate, SubId, Customer_id)
-VALUES
-('12', '2024-01-01', 1, 1),
-('4', '2024-01-01', 3, 2),
-('24', '2024-02-01', 5, 3),
-('12', '2024-03-01', 7, 4),
-('4', '2024-01-01', 9, 5),
-('12', '2024-02-15', 11, 6),
-('4', '2024-03-01', 13, 7),
-('24', '2024-01-01', 15, 8),
-('12', '2024-02-10', 17, 9),
-('4', '2024-03-01', 19, 10);
+-- Insert Publications
+INSERT INTO publications (PubName, PubType, Frequency) VALUES
+('Time Magazine', 'Magazine', 'weekly'),
+('National Geographic', 'Magazine', 'monthly'),
+('The New York Times', 'Newspaper', 'daily'),
+('The Guardian', 'Newspaper', 'daily'),
+('Sports Illustrated', 'Magazine', 'monthly'),
+('The Washington Post', 'Newspaper', 'weekly'),
+('Forbes', 'Magazine', 'quarterly'),
+('USA Today', 'Newspaper', 'daily'),
+('The Wall Street Journal', 'newspaper', '5-day'),
+('People Magazine', 'Magazine', 'weekly');
 
--- Insert newspaper subscriptions
-INSERT INTO newspaper (NumberOfMonths, StartDate, SubId, Customer_id)
-VALUES
-(3, '2024-01-01', 2, 1),
-(6, '2024-01-15', 4, 2),
-(12, '2024-02-01', 6, 3),
-(3, '2024-03-01', 8, 4),
-(6, '2024-01-01', 10, 5),
-(12, '2024-02-01', 12, 6),
-(3, '2024-03-15', 14, 7),
-(6, '2024-01-01', 16, 8),
-(12, '2024-02-05', 18, 9),
-(3, '2024-03-01', 20, 10);
+-- Insert Magazines
+INSERT INTO magazine (NumberOfIssues, StartDate, EndDate, Price, Frequency, SubId, Customer_id) VALUES
+(12, '2024-01-01', '2024-12-31', 12.00, 'monthly', 1, 1),
+(24, '2024-03-01', '2025-02-28', 18.00, 'monthly', 2, 2),
+(30, '2024-05-01', '2025-05-01', 16.00, 'quarterly', 3, 3),
+(12, '2024-02-01', '2024-11-30', 12.00, 'weekly', 4, 4),
+(24, '2024-06-01', '2025-05-31', 18.00, 'monthly', 5, 5),
+(30, '2024-04-01', '2025-04-01', 16.00, 'quarterly', 6, 6),
+(12, '2024-01-01', '2024-12-31', 12.00, 'monthly', 7, 7),
+(24, '2024-07-01', '2025-06-30', 18.00, 'quarterly', 8, 8),
+(12, '2024-03-01', '2024-12-31', 12.00, 'weekly', 9, 9),
+(30, '2024-08-01', '2025-07-31', 16.00, 'monthly', 10, 10);
+
+-- Insert Newspapers
+INSERT INTO newspaper (NumberOfMonths, StartDate, EndDate, Price, Frequency, SubId, Customer_id) VALUES
+(12, '2024-01-01', '2024-12-31', 80.00, 'weekly', 1, 1),
+(12, '2024-02-01', '2024-12-01', 90.00, 'weekly', 2, 2),
+(12, '2024-03-01', '2024-12-01', 100.00, 'weekly', 3, 3),
+(6, '2024-01-01', '2024-06-30', 50.00, '7-day', 4, 4),
+(6, '2024-04-01', '2024-09-30', 45.00, '5-day', 5, 5),
+(6, '2024-07-01', '2024-12-31', 30.00, '2-day', 6, 6),
+(6, '2024-01-01', '2024-06-30', 60.00, '7-day', 7, 7);
