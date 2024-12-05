@@ -61,6 +61,13 @@
                         <th>Subscription ID</th>
                         <th>Subscription Type</th>
                         <th>Customer ID</th>
+                        <th>Magazine Title</th>
+                        <th>Magazine Frequency</th>
+                        <th>Magazine Price</th>
+                        <th>Newspaper Frequency</th>
+                        <th>Newspaper Price</th>
+                        <th>Publication Type</th>
+                        <th>Publication Frequency</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,6 +76,14 @@
                             <td>{{ subscription[0] }}</td>
                             <td>{{ subscription[1] }}</td>
                             <td>{{ subscription[2] }}</td>
+                            <td>{{ subscription[3] }}</td>
+                            <td>{{ subscription[4] }}</td>
+                            <td>{{ subscription[5] }}</td>
+                            <td>{{ subscription[6] }}</td>
+                            <td>{{ subscription[7] }}</td>
+                            <td>{{ subscription[8] }}</td>
+                            <td>{{ subscription[9] }}</td>
+                            <td>{{ subscription[10] }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -77,6 +92,10 @@
     {% else %}
         <p class="no-data-message">No subscriptions found.</p>
     {% endif %}
+
+
+    
+
 
     {% if publications %}
         <div class="table-container">

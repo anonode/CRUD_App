@@ -121,9 +121,6 @@ def create_publication():
     flash('Publication added successfully!', 'success')
     return redirect(url_for('create'))
 
-from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
-
 @app.route('/create_magazine', methods=['POST'])
 def create_magazine():
     start_date_str = request.form['StartDate']
@@ -318,9 +315,12 @@ def read_subscription():
     subtype = request.args.get('SubType')
     customer_id = request.args.get('Customer_id')
 
-    if subtype not in pubtypes:
+    # Handle invalid subscription type
+    if subtype != "" and subtype not in pubtypes:
         flash(f'The subtype you entered does not exist. Must be one of the following: {" ".join([ptype for ptype in pubtypes])}', 'error')
         return redirect(url_for('read'))
+    
+    # Handle customer ID validity
     if customer_id != "":
         try:
             customer_id = int(customer_id)
@@ -328,29 +328,79 @@ def read_subscription():
             flash(f'You did not enter a valid customer ID. Here is what you entered: {customer_id}', 'error')
             return redirect(url_for('read'))
 
+    cur = mysql.connection.cursor()
+    
+    # If both subtype and customer_id are empty, fetch all subscription data
     if subtype == "" and customer_id == "":
-        flash('You did not enter anything to search for. Please try again. Only one parameter is required for this search.', 'error')
-        return redirect(url_for('read'))
+        cur.execute("""
+            SELECT s.*, 
+                   m.NumberOfIssues, m.Frequency AS MagazineFrequency, m.Price AS MagazinePrice,
+                   n.NumberOfMonths, n.Frequency AS NewspaperFrequency, n.Price AS NewspaperPrice,
+                   p.PubName AS MagazineTitle, p.PubType, p.Frequency AS PublicationFrequency
+            FROM subscriptions s
+            LEFT JOIN magazine m ON s.SubId = m.SubId
+            LEFT JOIN newspaper n ON s.SubId = n.SubId
+            LEFT JOIN publications p ON m.Frequency = p.Frequency
+        """)
+        subscriptions = cur.fetchall()
+    # If only customer_id is provided, fetch subscriptions for the given customer
+    elif subtype == "":
+        cur.execute("""
+            SELECT s.*, 
+                   m.NumberOfIssues, m.Frequency AS MagazineFrequency, m.Price AS MagazinePrice,
+                   n.NumberOfMonths, n.Frequency AS NewspaperFrequency, n.Price AS NewspaperPrice,
+                   p.PubName AS MagazineTitle, p.PubType, p.Frequency AS PublicationFrequency
+            FROM subscriptions s
+            LEFT JOIN magazine m ON s.SubId = m.SubId
+            LEFT JOIN newspaper n ON s.SubId = n.SubId
+            LEFT JOIN publications p ON m.Frequency = p.Frequency
+            WHERE s.Customer_id = %s
+        """, (customer_id,))
+        subscriptions = cur.fetchall()
+    # If only subtype is provided, fetch subscriptions for the given subscription type
+    elif customer_id == "":
+        cur.execute("""
+            SELECT s.*, 
+                   m.NumberOfIssues, m.Frequency AS MagazineFrequency, m.Price AS MagazinePrice,
+                   n.NumberOfMonths, n.Frequency AS NewspaperFrequency, n.Price AS NewspaperPrice,
+                   p.PubName AS MagazineTitle, p.PubType, p.Frequency AS PublicationFrequency
+            FROM subscriptions s
+            LEFT JOIN magazine m ON s.SubId = m.SubId
+            LEFT JOIN newspaper n ON s.SubId = n.SubId
+            LEFT JOIN publications p ON m.Frequency = p.Frequency
+            WHERE s.SubType = %s
+        """, (subtype,))
+        subscriptions = cur.fetchall()
+    # If both subtype and customer_id are provided, fetch subscriptions for both
     else:
-        cur = mysql.connection.cursor()
-        if subtype == "":
-            cur.execute('SELECT * FROM subscriptions WHERE Customer_id = %s', (customer_id,))
-            subscriptions = cur.fetchall()
-        elif customer_id == "":
-            cur.execute('SELECT * FROM subscriptions WHERE SubType = %s', (subtype,))
-            subscriptions = cur.fetchall()
-        else:
-            cur.execute('SELECT * FROM subscriptions WHERE SubType = %s AND Customer_id = %s', (subtype, customer_id))
-            subscriptions = cur.fetchall()
+        cur.execute("""
+            SELECT s.*, 
+                   m.NumberOfIssues, m.Frequency AS MagazineFrequency, m.Price AS MagazinePrice,
+                   n.NumberOfMonths, n.Frequency AS NewspaperFrequency, n.Price AS NewspaperPrice,
+                   p.PubName AS MagazineTitle, p.PubType, p.Frequency AS PublicationFrequency
+            FROM subscriptions s
+            LEFT JOIN magazine m ON s.SubId = m.SubId
+            LEFT JOIN newspaper n ON s.SubId = n.SubId
+            LEFT JOIN publications p ON m.Frequency = p.Frequency
+            WHERE s.SubType = %s AND s.Customer_id = %s
+        """, (subtype, customer_id))
+        subscriptions = cur.fetchall()
+    
     cur.close()
     return render_template('read.html', subscriptions=subscriptions)
+
 
 
 @app.route('/read_publication', methods=['GET'])
 def read_publication():
     pubname = request.args.get('PubName')
     pubtype = request.args.get('PubType')
-    
+    if pubname == "" and pubtype == "":
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM publications")
+        publications = cur.fetchall()
+        cur.close()
+        return render_template('read.html', publications=publications)
     if pubtype not in pubtypes:
         flash(f'The pubtype you entered is not correct. Must be one of the following: {" ".join(pub for pub in pubtypes)}', 'error')
         return redirect(url_for('read'))
@@ -369,8 +419,15 @@ def read_magazine():
     num_of_issues = request.args.get('NumberOfIssues')
     start_date = request.args.get('StartDate')
     end_date = request.args.get('EndDate')
-    price = request.args.get('Price')
-
+    
+    
+    print(f"{type(sub_id)}, {type(customer_id)}, {type(num_of_issues)}, {type(start_date)}, {type(end_date)}")
+    if all(form == "" for form in [sub_id, customer_id, num_of_issues, start_date, end_date]):
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT * FROM magazine')
+        magazines = cur.fetchall()
+        cur.close()
+        return render_template('read.html', magazines=magazines)
     try:
         if sub_id:
             sub_id = int(sub_id)
@@ -403,9 +460,6 @@ def read_magazine():
     if end_date:
         set_clauses.append("EndDate = %s")
         params.append(end_date)
-    if price:
-        set_clauses.append("Price = %s")
-        params.append(price)
 
     if set_clauses:
         where_clause = " AND ".join(set_clauses)
@@ -432,8 +486,13 @@ def read_newspaper():
     num_of_months = request.args.get('NumberOfMonths')
     start_date = request.args.get('StartDate')
     end_date = request.args.get('EndDate')
-    price = request.args.get('Price')
 
+    if all(form == "" for form in [sub_id, customer_id, num_of_months, start_date, end_date]):
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT * FROM magazine')
+        newspapers = cur.fetchall()
+        cur.close()
+        return render_template('read.html', newspapers=newspapers)
     try:
         if sub_id:
             sub_id = int(sub_id)
@@ -466,9 +525,6 @@ def read_newspaper():
     if end_date:
         set_clauses.append("EndDate = %s")
         params.append(end_date)
-    if price:
-        set_clauses.append("Price = %s")
-        params.append(price)
 
     if set_clauses:
         where_clause = " AND ".join(set_clauses)
@@ -651,7 +707,7 @@ def update_newspaper():
         set_clauses.append("Price = %s")
         params.append(price)
 
-    # Optional: update the SubId or Customer_id if they are included (ensure validation)
+    #update the SubId or Customer_id if they are included (ensure validation)
     if sub_id != "":
         set_clauses.append("SubId = %s")
         params.append(sub_id)
@@ -663,12 +719,12 @@ def update_newspaper():
     set_clause = ", ".join(set_clauses)
     cur = mysql.connection.cursor()
     query = f"UPDATE newspaper SET {set_clause} WHERE NewsId = %s"
-    params.append(news_id)  # Add the NewsId to the parameters
+    params.append(news_id)
     cur.execute(query, tuple(params))
     mysql.connection.commit()
     cur.close()
     flash('Newspaper update done successfully', 'success')
-    return redirect(url_for('update'))  # Adjust redirection as needed
+    return redirect(url_for('update'))
 
 
 
